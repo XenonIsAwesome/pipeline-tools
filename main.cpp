@@ -2,7 +2,7 @@
 #include <modules/AddModule.h>
 
 #include "modules/NumberSource.h"
-#include "modules/PrintSink.h"
+#include "modules/PrintSink.hpp"
 
 int main() {
     pt::flow::blocks::Pipeline p("");
