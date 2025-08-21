@@ -31,20 +31,15 @@ namespace pt::flow {
                     auto val = (i + 1 == next_nodes.size())
                         ? std::move(results.front())
                         : results.front(); // copy for all but last
-                    forward(next_nodes[i], val);
+                    next_nodes[i]->execute(val);
                 }
             }
             // one-to-one: result[i] -> outputs[i]
             else {
                 for (size_t i = 0; i < results.size() && i < next_nodes.size(); ++i) {
-                    forward(next_nodes[i], std::move(results[i]));
+                    next_nodes[i]->execute(std::move(results[i]));
                 }
             }
-        }
-
-        template<typename T>
-        void forward(const std::shared_ptr<Flow>& next, T&& val) {
-            next->execute(val);
         }
 
     private:
