@@ -1,56 +1,24 @@
 #pragma once
 
-#include <any>
-#include <iostream>
-#include <memory>
-#include <flow/Block.hpp>
+#include <flow/Flow.hpp>
 
-#include <optional>
-
-namespace pt::flow::blocks {
-    // TODO(xenon): add docs
-    template<typename Input, typename Output>
-    class Module : public Block {
+namespace pt::flow {
+    template<typename In, typename Out>
+    class Module : public Flow {
     public:
-        using input_type = Input;
-        using output_type = Output;
+        explicit Module(std::string name): Flow(std::move(name)) {}
 
-        ~Module() override = default;
+        virtual std::vector<Out> process(const In& input) = 0;
 
-        // TODO(xenon): add docs
-        explicit Module(std::string name): Block(std::move(name)) {}
+        std::vector<std::any> process_any(const std::any& in) override {
+            std::vector<std::any> out;
+            if (!in.has_value()) return out;
 
-        // TODO(xenon): add docs
-        virtual std::optional<Output> process(const Input &) = 0;
-    };
-
-    class IModuleAny {
-    public:
-        virtual ~IModuleAny() = default;
-
-        virtual std::string get_name() = 0;
-        virtual std::optional<std::any> process_any(std::any in) = 0;
-    };
-
-    template<typename Input, typename Output>
-    class ModuleHolder final : public IModuleAny {
-    public:
-        explicit ModuleHolder(std::shared_ptr<Module<Input, Output>> m):
-            module(std::move(m)) {}
-
-        std::optional<std::any> process_any(std::any in) override {
-            auto result = module->process(std::any_cast<Input>(in));
-            if (result.has_value())
-                return std::any(result.value());
-            return std::nullopt;
+            const In& typed_in = std::any_cast<const In&>(in);
+            auto results = process(typed_in);
+            out.reserve(results.size());
+            for (auto& r : results) out.push_back(r);
+            return out;
         }
-
-
-        std::string get_name() override {
-            return module->get_name();
-        }
-
-    private:
-        std::shared_ptr<Module<Input, Output>> module;
     };
-} // namespace pt::flow::blocks
+}

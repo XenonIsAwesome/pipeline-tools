@@ -2,7 +2,6 @@
 
 using namespace pt::modules;
 
-std::optional<int> NumberSource::process() {
-    // TODO(xenon): implement
-    return num;
+std::vector<int> NumberSource::process() {
+    return { num };
 }

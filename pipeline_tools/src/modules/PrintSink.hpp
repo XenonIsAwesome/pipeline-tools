@@ -13,10 +13,10 @@ concept Printable = requires(T t) {
 namespace pt::modules {
     // TODO(xenon): add docs
     template<Printable T>
-    class PrintSink: public flow::blocks::Sink<T> {
+    class PrintSink: public flow::Sink<T> {
     public:
         // TODO(xenon): add docs if needed
-        PrintSink(): flow::blocks::Sink<T>("PrintSink") {}
+        PrintSink(): flow::Sink<T>("PrintSink") {}
         
         // TODO(xenon): add docs if needed
         void process(const T& input) override;

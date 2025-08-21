@@ -6,14 +6,14 @@
 
 namespace pt::modules {
     // TODO(xenon): add docs
-    class AddModule final : public flow::blocks::Module<int, int> {
+    class AddModule : public flow::Module<int, int> {
     public:
         // TODO(xenon): add docs if needed
         explicit AddModule(const int addition):
             Module("AddModule"), addition(addition) {}
         
         // TODO(xenon): add docs if needed
-        std::optional<int> process(const int&) override;
+        std::vector<int> process(const int&) override;
 
     private:
         int addition;

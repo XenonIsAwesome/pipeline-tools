@@ -1,54 +1,37 @@
 #pragma once
-
-#include <iostream>
-#include <flow/blocks/Module.hpp>
-
 #include <memory>
 #include <vector>
+#include <flow/Flow.hpp>
 
-#include "Sink.hpp"
-#include "Source.hpp"
-
-
-namespace pt::flow::blocks {
+namespace pt::flow {
     class Pipeline final : public Block {
     public:
-        explicit Pipeline(const std::string &name): Block(name), modules({}) {}
+        explicit Pipeline(std::string name): Block(std::move(name)) {}
 
-        template<typename S, typename Input = typename S::input_type>
-        void set_sink(std::shared_ptr<S> s)
-        requires std::derived_from<S, Sink<Input>>
-        {
-            sink = std::make_shared<SinkHolder<Input>>(std::move(s));
-        }
-
-        template<typename S, typename Output = typename S::output_type>
-        void set_source(std::shared_ptr<S> s)
-        requires std::derived_from<S, Source<Output>>
-        {
-            source = std::make_shared<SourceHolder<Output>>(std::move(s));
-        }
-
-        template<typename M, typename In = typename M::input_type, typename Out = typename M::output_type>
-        void add_module(std::shared_ptr<M> m)
-        requires std::derived_from<M, Module<In, Out>>
-        {
-            modules.push_back(std::make_shared<ModuleHolder<In, Out>>(std::move(m)));
-        }
-
-        void execute() const {
-            std::optional<std::any> data = source->process_any();
-            for (const auto &m : modules) {
-                if (!data.has_value()) return;
-                data = m->process_any(data.value());
+        // Add a flow object and auto-connect to previous
+        template<typename F>
+        std::shared_ptr<F> add(std::shared_ptr<F> f) {
+            if (!nodes.empty()) {
+                nodes.back()->connect(f); // auto-wire previous -> current
             }
-            if (!data.has_value()) return;
-            sink->process_any(data.value());
+            nodes.push_back(f);
+            return f;
+        }
+
+        // Manual connect (for branching/fanout/etc.)
+        static void connect(const std::shared_ptr<Flow> &from,
+                            const std::shared_ptr<Flow> &to) {
+            from->connect(to);
+        }
+
+        // Trigger execution (start from first node)
+        void execute() const {
+            if (!nodes.empty()) {
+                nodes.front()->execute();
+            }
         }
 
     private:
-        std::shared_ptr<ISourceAny> source;
-        std::vector<std::shared_ptr<IModuleAny>> modules;
-        std::shared_ptr<ISinkAny> sink;
+        std::vector<std::shared_ptr<Flow> > nodes{};
     };
-} // namespace pt::flow::blocks
+} // namespace pt::flow
