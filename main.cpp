@@ -13,14 +13,18 @@ int main() {
     auto mod_a = std::make_shared<pt::modules::AddModule>(1);
     p.add(mod_a);
 
-    p.add(std::make_shared<pt::modules::AddModule>(2));
-
-    auto mod_b = std::make_shared<pt::modules::AddModule>(3);
+    auto mod_b = std::make_shared<pt::modules::AddModule>(2);
     p.add(mod_b);
 
-    pt::flow::Pipeline::connect(mod_a, mod_b);
+    auto mod_c = std::make_shared<pt::modules::AddModule>(3);
+    p.add(mod_c);
 
-    p.add(std::make_shared<pt::modules::PrintSink<int>>());
+    pt::flow::Pipeline::connect(mod_a, mod_c);
+
+    auto sink = std::make_shared<pt::modules::PrintSink<int>>();
+    p.add(sink);
+
+    pt::flow::Pipeline::connect(mod_b, sink);
 
     p.execute();
 }
