@@ -12,7 +12,7 @@ namespace pt::flow {
 
         virtual std::optional<Out> process(const In& input) = 0;
 
-        std::any process_any(const std::any& in) override {
+        std::any process_any(const std::any& in, size_t producer_id) override {
             auto result = process(std::any_cast<In>(in));
             if (result.has_value())
                 return std::any(result.value());
