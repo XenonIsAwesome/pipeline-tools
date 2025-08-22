@@ -9,11 +9,11 @@ namespace pt::modules {
     class AddModule : public flow::Module<int, int> {
     public:
         // TODO(xenon): add docs if needed
-        explicit AddModule(const int addition):
-            Module("AddModule"), addition(addition) {}
+        explicit AddModule(const int addition, flow::ProductionPolicy policy = flow::ProductionPolicy::SingleOutputManyConsumers):
+            Module("AddModule", policy), addition(addition) {}
         
         // TODO(xenon): add docs if needed
-        std::vector<int> process(const int&) override;
+        int process(const int&) override;
 
     private:
         int addition;

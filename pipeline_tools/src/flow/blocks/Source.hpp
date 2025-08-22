@@ -6,16 +6,13 @@ namespace pt::flow {
     template<typename Out>
     class Source : public Flow {
     public:
-        explicit Source(std::string name): Flow(std::move(name)) {}
+        explicit Source(std::string name, const ProductionPolicy policy):
+            Flow(std::move(name), policy) {}
 
-        virtual std::vector<Out> process() = 0;
+        virtual Out process() = 0;
 
-        std::vector<std::any> process_any(const std::any&) override {
-            auto result = process();
-            std::vector<std::any> out;
-            out.reserve(result.size());
-            for (auto& r : result) out.push_back(r);
-            return out;
+        std::any process_any(const std::any&) override {
+            return process();
         }
     };
 }
