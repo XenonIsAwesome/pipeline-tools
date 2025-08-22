@@ -9,7 +9,7 @@ namespace pt::flow {
         explicit Source(std::string name, const ProductionPolicy policy):
             Flow(std::move(name), policy) {}
 
-        virtual Out process() = 0;
+        virtual std::optional<Out> process() = 0;
 
         std::any process_any(const std::any&) override {
             return process();

@@ -2,6 +2,6 @@
 
 using namespace pt::modules;
 
-int NumberSource::process() {
+std::optional<int> NumberSource::process() {
     return num;
 }

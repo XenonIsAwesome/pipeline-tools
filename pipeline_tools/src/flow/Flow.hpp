@@ -3,6 +3,7 @@
 #include <any>
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <vector>
 #include <flow/Block.hpp>
 
@@ -10,14 +11,13 @@
 namespace pt::flow {
     enum class ProductionPolicy {
         NoConsumer,
-        SingleConsumer,
-        ManyOutputsManyConsumers,
-        SingleOutputManyConsumers
+        ManyOutputs,
+        SingleOutput
     };
 
     class Flow : public Block {
     public:
-        explicit Flow(std::string name, const ProductionPolicy policy = ProductionPolicy::SingleConsumer):
+        explicit Flow(std::string name, const ProductionPolicy policy = ProductionPolicy::SingleOutput):
             Block(std::move(name)), policy(policy) {}
 
         ~Flow() override = default;
@@ -29,25 +29,23 @@ namespace pt::flow {
         }
 
         /**
-         * SingleConsumer::produce -> next_nodes.at(0)->execute(output);
-         * ManyOutputsManyConsumers::produce -> fanout to consumers: next_nodes.at(i)->execute(outputs.at(i)
-         * SingleOutputManyConsumers::produce -> copy to next_nodes.size() - 1 consumers, std::move to the last
+         * NoConsumer (sink) -> return
+         * ManyOutputs -> fanout to consumers: next_nodes.at(i)->execute(outputs.at(i)
+         * SingleOutput -> copy to next_nodes.size() - 1 consumers, std::move to the last
          */
         void produce(const std::any& output) {
             if (policy == ProductionPolicy::NoConsumer) {
                 return;
             }
 
-            if (policy == ProductionPolicy::SingleConsumer) {
-                next_nodes.front()->execute(std::move(output));
-            } else if (policy == ProductionPolicy::ManyOutputsManyConsumers) {
+            if (policy == ProductionPolicy::ManyOutputs) {
                 auto outputs = std::any_cast<std::vector<std::any>>(output);
                 size_t max_size = std::min(outputs.size(), next_nodes.size());
 
                 for (size_t i = 0; i < max_size; i++) {
                     next_nodes.at(i)->execute(std::move(outputs.at(i)));
                 }
-            } else if (policy == ProductionPolicy::SingleOutputManyConsumers) {
+            } else if (policy == ProductionPolicy::SingleOutput) {
                 for (size_t i = 0; i < next_nodes.size() - 1; ++i) {
                     next_nodes.at(i)->execute(output);
                 }
@@ -57,8 +55,10 @@ namespace pt::flow {
             }
         }
 
-        void execute(const std::any &in = {}) {
-            produce(process_any(in));
+        void execute(const std::any& in = {}) {
+            auto output = process_any(in);
+            if (output.has_value())
+                produce(output);
         }
 
     private:

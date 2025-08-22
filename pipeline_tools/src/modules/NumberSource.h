@@ -9,11 +9,11 @@ namespace pt::modules {
     class NumberSource final: public flow::Source<int> {
     public:
         // TODO(xenon): add docs if needed
-        explicit NumberSource(const int number, flow::ProductionPolicy policy = flow::ProductionPolicy::SingleOutputManyConsumers):
-            Source("NumberSource", policy), num(number) {}
+        explicit NumberSource(const int number):
+            Source("NumberSource", flow::ProductionPolicy::SingleOutput), num(number) {}
         
         // TODO(xenon): add docs if needed
-        int process() override;
+        std::optional<int> process() override;
 
     private:
         int num;

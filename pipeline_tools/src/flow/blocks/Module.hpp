@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <flow/Flow.hpp>
 
 namespace pt::flow {
@@ -9,10 +10,13 @@ namespace pt::flow {
         explicit Module(std::string name, const ProductionPolicy policy):
             Flow(std::move(name), policy) {}
 
-        virtual Out process(const In& input) = 0;
+        virtual std::optional<Out> process(const In& input) = 0;
 
         std::any process_any(const std::any& in) override {
-            return process(std::any_cast<In>(in));
+            auto result = process(std::any_cast<In>(in));
+            if (result.has_value())
+                return std::any(result.value());
+            return std::nullopt;
         }
     };
 }

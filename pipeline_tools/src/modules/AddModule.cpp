@@ -2,6 +2,6 @@
 
 using namespace pt::modules;
 
-int AddModule::process(const int& input) {
+std::optional<int> AddModule::process(const int& input) {
     return input + addition;
 }
