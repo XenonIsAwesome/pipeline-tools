@@ -6,7 +6,7 @@ variables:
   BUILD_DIR: build
 
 before_script:
-  - cmake -B $BUILD_DIR
+  - cmake -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
 
 Build All:
   stage: build
