@@ -7,7 +7,7 @@
 #include <flow/blocks/Source.hpp>
 #include <flow/blocks/Aggregator.hpp>
 #include <flow/blocks/Pipeline.hpp>
-#include "TestBlocks.h"
+#include "TestBlocks.hpp"
 
 // --- Tests ---
 

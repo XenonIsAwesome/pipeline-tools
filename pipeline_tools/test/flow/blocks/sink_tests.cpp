@@ -2,7 +2,7 @@
 #include <modules/PrintSink.hpp>
 #include <flow/blocks/Sink.hpp>
 
-#include "TestBlocks.h"
+#include "TestBlocks.hpp"
 #include "flow/blocks/Pipeline.hpp"
 #include "modules/NumberSource.h"
 

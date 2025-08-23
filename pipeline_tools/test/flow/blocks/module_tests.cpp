@@ -3,7 +3,7 @@
 #include <modules/NumberSource.h>
 #include <flow/blocks/Module.hpp>
 #include <flow/blocks/Pipeline.hpp>
-#include "TestBlocks.h"
+#include "TestBlocks.hpp"
 
 TEST(ModuleTests, ProcessAnyInvokesProcess) {
     pt::modules::AddModule mod(10);

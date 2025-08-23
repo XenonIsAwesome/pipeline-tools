@@ -2,7 +2,7 @@
 #include <modules/NumberSource.h>
 #include <flow/blocks/Source.hpp>
 
-#include "TestBlocks.h"
+#include "TestBlocks.hpp"
 #include "flow/blocks/Pipeline.hpp"
 
 TEST(SourceTests, ProcessAnyInvokesProcess) {
