@@ -11,14 +11,14 @@ concept Printable = requires(T t) {
 };
 
 namespace pt::modules {
-    // TODO(xenon): add docs
+    // TODO: add docs
     template<Printable T>
     class PrintSink: public flow::Sink<T> {
     public:
-        // TODO(xenon): add docs if needed
+        // TODO: add docs if needed
         PrintSink(): flow::Sink<T>("PrintSink") {}
         
-        // TODO(xenon): add docs if needed
+        // TODO: add docs if needed
         void process(const T& input) override;
     };
 } // namespace pt::modules

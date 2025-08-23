@@ -5,14 +5,14 @@
 #include <optional>
 
 namespace pt::modules {
-    // TODO(xenon): add docs
+    // TODO: add docs
     class NumberSource final: public flow::Source<int> {
     public:
-        // TODO(xenon): add docs if needed
+        // TODO: add docs if needed
         explicit NumberSource(const int number):
             Source("NumberSource", flow::ProductionPolicy::SingleOutput), num(number) {}
         
-        // TODO(xenon): add docs if needed
+        // TODO: add docs if needed
         std::optional<int> process() override;
 
     private:

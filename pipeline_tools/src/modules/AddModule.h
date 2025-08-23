@@ -5,14 +5,14 @@
 #include <optional>
 
 namespace pt::modules {
-    // TODO(xenon): add docs
+    // TODO: add docs
     class AddModule : public flow::Module<int, int> {
     public:
-        // TODO(xenon): add docs if needed
+        // TODO: add docs if needed
         explicit AddModule(const int addition):
             Module("AddModule", flow::ProductionPolicy::SingleOutput), addition(addition) {}
         
-        // TODO(xenon): add docs if needed
+        // TODO: add docs if needed
         std::optional<int> process(const int&) override;
 
     private:
