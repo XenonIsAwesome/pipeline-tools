@@ -14,9 +14,9 @@ namespace pt::flow {
         template<typename F, typename FOut = typename F::output_type>
         std::shared_ptr<F> add(std::shared_ptr<F> f) {
             if constexpr (std::derived_from<F, Source<FOut>>) {
-                bool sinks_empty = sinks.empty();
-                sinks.push_back(f);
-                if (!sinks_empty) {
+                bool sources_empty = sources.empty();
+                sources.push_back(f);
+                if (!sources_empty) {
                     return f;
                 }
             }
@@ -37,9 +37,9 @@ namespace pt::flow {
 
         // Trigger execution (start from first node)
         void execute() const {
-            if (!sinks.empty()) {
-                for (auto& sink : sinks) {
-                    sink->execute();
+            if (!sources.empty()) {
+                for (auto& src : sources) {
+                    src->execute();
                 }
             } else if (!nodes.empty()) {
                 nodes.front()->execute();
@@ -47,7 +47,7 @@ namespace pt::flow {
         }
 
     private:
-        std::vector<std::shared_ptr<Flow> > sinks{};
+        std::vector<std::shared_ptr<Flow> > sources{};
         std::vector<std::shared_ptr<Flow> > nodes{};
     };
 } // namespace pt::flow
