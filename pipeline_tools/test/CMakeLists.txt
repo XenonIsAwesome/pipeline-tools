@@ -10,7 +10,6 @@ include(FetchContent)
 
 # Check if gtest is already installed
 find_package(GTest QUIET)
-
 if (NOT GTest_FOUND)
     message(STATUS "GTest not found, fetching with FetchContent...")
 
@@ -25,26 +24,36 @@ if (NOT GTest_FOUND)
     FetchContent_MakeAvailable(googletest)
 endif()
 
-# --- Collect all test sources ---
-file(GLOB_RECURSE TEST_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+# ----------------- GTest target -----------------
+file(GLOB_RECURSE GTEST_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/*_tests.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/main_gtest.cpp"
 )
 
-# --- Create test executable ---
-add_executable(pipeline_tools_tests ${TEST_SOURCES})
+add_executable(libpt-gtest ${GTEST_SOURCES})
+target_link_libraries(libpt-gtest PRIVATE gtest gtest_main pthread libpt)
+# assuming "libpt" is your main library
 
-target_include_directories(pipeline_tools_tests PRIVATE
-        ${CMAKE_SOURCE_DIR}/pipeline_tools/src
+add_test(NAME libpt-gtest COMMAND libpt-gtest)
+
+# Check if gtest is already installed
+find_package(benchmark QUIET)
+if (NOT benchmark_FOUND)
+    message(STATUS "benchmark not found, fetching with FetchContent...")
+
+    FetchContent_Declare(
+            benchmark
+            GIT_REPOSITORY https://github.com/google/benchmark.git
+            GIT_TAG        v1.9.4 # latest stable as of 2025
+    )
+    FetchContent_MakeAvailable(benchmark)
+endif()
+
+# ----------------- Benchmark target -----------------
+file(GLOB_RECURSE BM_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/BM_*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/main_BM.cpp"
 )
 
-target_link_libraries(pipeline_tools_tests
-        PRIVATE
-        libpt
-        GTest::gtest
-        GTest::gtest_main
-        pthread   # needed on Linux
-)
-
-# --- Register with CTest ---
-include(GoogleTest)
-gtest_discover_tests(pipeline_tools_tests)
+add_executable(libpt-benchmark ${BM_SOURCES})
+target_link_libraries(libpt-benchmark PRIVATE benchmark pthread libpt)
