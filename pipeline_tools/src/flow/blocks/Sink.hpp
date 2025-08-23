@@ -6,6 +6,8 @@ namespace pt::flow {
     template<typename In>
     class Sink : public Flow {
     public:
+        using input_type = In;
+
         explicit Sink(std::string name) : Flow(std::move(name), ProductionPolicy::NoConsumer) {}
 
         virtual void process(const In& input) = 0;

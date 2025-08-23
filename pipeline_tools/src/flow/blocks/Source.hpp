@@ -6,6 +6,8 @@ namespace pt::flow {
     template<typename Out>
     class Source : public Flow {
     public:
+        using output_type = Out;
+
         explicit Source(std::string name, const ProductionPolicy policy):
             Flow(std::move(name), policy) {}
 

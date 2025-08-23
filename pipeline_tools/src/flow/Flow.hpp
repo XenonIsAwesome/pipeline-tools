@@ -17,6 +17,9 @@ namespace pt::flow {
 
     class Flow : public Block {
     public:
+        using input_type = void;
+        using output_type = void;
+
         explicit Flow(std::string name, const ProductionPolicy policy = ProductionPolicy::SingleOutput):
             Block(std::move(name)), policy(policy) {}
 
