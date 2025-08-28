@@ -1,9 +1,9 @@
 #include <benchmark/benchmark.h>
-#include <modules/AddModule.h>
+#include <modules/math/AdditionModule.hpp>
 #include <memory>
 
 static void BM_AddModule_ProcessAny(benchmark::State& state) {
-    pt::modules::AddModule mod(10);
+    pt::modules::AdditionModule<int, int, int> mod(10);
     for (auto _ : state) {
         benchmark::DoNotOptimize(mod.process_any(5, 0));
     }

@@ -3,44 +3,38 @@
 #include <any>
 #include <iostream>
 #include <memory>
-#include <optional>
+#include <utility>
 #include <vector>
-#include <flow/Block.hpp>
 
 
 namespace pt::flow {
     enum class ProductionPolicy {
-        NoConsumer,
-        ManyOutputs,
-        SingleOutput
+        NoConsumer, /*< Special case for Sinks */
+        RoundRobin, /*< next_nodes.at(i)->execute(outputs.at(i)) */
+        Fanout /*< copy to next_nodes.size() - 1 consumers, std::move to the last */
     };
 
-    class Flow : public Block {
+    class Flow {
     public:
+        virtual ~Flow() = default;
+
         using input_type = void;
         using output_type = void;
 
-        explicit Flow(std::string name, const ProductionPolicy policy = ProductionPolicy::SingleOutput):
-            Block(std::move(name)), policy(policy) {}
+        explicit Flow(const ProductionPolicy policy = ProductionPolicy::Fanout):
+            policy(policy) {}
 
-        ~Flow() override = default;
+        virtual std::any process_any(std::any in, size_t producer_id) = 0;
 
-        virtual std::any process_any(const std::any &in, size_t producer_id) = 0;
-
-        void connect(std::shared_ptr<Flow> next) {
+        void connect(const std::shared_ptr<Flow>& next) {
             size_t id = next->register_producer(next);
-            next_nodes.push_back({next, id});
+            next_nodes.emplace_back(next, id);
         }
 
-        /**
-         * NoConsumer (sink) -> return
-         * ManyOutputs -> fanout to consumers: next_nodes.at(i)->execute(outputs.at(i)
-         * SingleOutput -> copy to next_nodes.size() - 1 consumers, std::move to the last
-         */
-        void produce(const std::any& output) {
+        void produce(std::any output) {
             if (policy == ProductionPolicy::NoConsumer) return;
 
-            if (policy == ProductionPolicy::ManyOutputs) {
+            if (policy == ProductionPolicy::RoundRobin) {
                 auto outputs = std::any_cast<std::vector<std::any>>(output);
                 size_t max_size = std::min(outputs.size(), next_nodes.size());
 
@@ -48,7 +42,7 @@ namespace pt::flow {
                     auto& [next, id] = next_nodes[i];
                     next->execute(std::move(outputs.at(i)), id);
                 }
-            } else if (policy == ProductionPolicy::SingleOutput) {
+            } else if (policy == ProductionPolicy::Fanout) {
                 for (size_t i = 0; i < next_nodes.size() - 1; ++i) {
                     auto& [next, id] = next_nodes[i];
                     next->execute(output, id);
@@ -60,10 +54,10 @@ namespace pt::flow {
             }
         }
 
-        void execute(const std::any& in = {}, size_t producer_id = 0) {
-            auto output = process_any(in, producer_id);
+        void execute(std::any in = {}, size_t producer_id = 0) {
+            auto output = process_any(std::move(in), producer_id);
             if (output.has_value())
-                produce(output);
+                produce(std::move(output));
         }
 
     protected:

@@ -1,15 +1,15 @@
 #include <benchmark/benchmark.h>
-#include <flow/blocks/Pipeline.hpp>
-#include <modules/AddModule.h>
-#include <modules/NumberSource.h>
-#include "TestBlocks.hpp"
+#include <flow/Pipeline.hpp>
+#include <modules/io/ConstantSource.hpp>
+#include <modules/math/AdditionModule.hpp>
+#include "../FlowTestObjects.hpp"
 
-static void BM_Pipeline_ExecuteChain(benchmark::State& state) {
-    for (auto _ : state) {
-        pt::flow::Pipeline p("p");
-        p.add(std::make_shared<pt::modules::NumberSource>(1));
-        p.add(std::make_shared<pt::modules::AddModule>(2));
-        p.add(std::make_shared<TestSink>());
+static void BM_Pipeline_ExecuteChain(benchmark::State &state) {
+    for (auto _: state) {
+        pt::flow::Pipeline p;
+        p.add(std::make_shared<pt::modules::ConstantSource<int>>(1));
+        p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(2));
+        p.add(std::make_shared<MockSink>());
         p.execute();
     }
 }

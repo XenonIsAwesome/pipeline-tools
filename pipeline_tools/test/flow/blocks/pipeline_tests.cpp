@@ -1,50 +1,40 @@
+#include <flow/Pipeline.hpp>
 #include <gtest/gtest.h>
-#include <flow/blocks/Pipeline.hpp>
-#include <modules/NumberSource.h>
-#include <modules/AddModule.h>
-#include <flow/blocks/Sink.hpp>
+#include <modules/io/ConstantSource.hpp>
+#include <modules/math/AdditionModule.hpp>
+
+#include "../FlowTestObjects.hpp"
 
 TEST(PipelineTests, AutoConnectSingleChain) {
-    pt::flow::Pipeline p("p");
-    p.add(std::make_shared<pt::modules::NumberSource>(1));
-    p.add(std::make_shared<pt::modules::AddModule>(2));
-
-    class CaptureSink : public pt::flow::Sink<int> {
-    public:
-        CaptureSink() : Sink<int>("CaptureSink") {}
-        void process(const int& input) override { captured = input; }
-        int captured = 0;
-    };
-    auto sink = p.add(std::make_shared<CaptureSink>());
+    pt::flow::Pipeline p;
+    p.add(std::make_shared<pt::modules::ConstantSource<int>>(1));
+    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(2));
+    auto sink = p.add(std::make_shared<MockSink>());
     p.execute();
 
-    EXPECT_EQ(3, sink->captured);
+    EXPECT_EQ(std::vector{3}, sink->collected);
 }
 
 TEST(PipelineTests, ManualConnectBranching) {
-    pt::flow::Pipeline p("p");
-    auto src = p.add(std::make_shared<pt::modules::NumberSource>(10));
-    auto mod1 = p.add(std::make_shared<pt::modules::AddModule>(1));
-    auto mod2 = std::make_shared<pt::modules::AddModule>(5);
-
-    class CaptureSink : public pt::flow::Sink<int> {
-    public:
-        CaptureSink() : Sink<int>("CaptureSink") {}
-        void process(const int& input) override { collected.push_back(input); }
-        std::vector<int> collected;
-    };
-    auto sink1 = p.add(std::make_shared<CaptureSink>());
-    auto sink2 = std::make_shared<CaptureSink>();
+    pt::flow::Pipeline p;
+    auto src = p.add(std::make_shared<pt::modules::ConstantSource<int>>(10));
+    auto mod1 = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(1));
+    auto mod2 = std::make_shared<pt::modules::AdditionModule<int, int, int>>(5);
+    auto sink1 = p.add(std::make_shared<MockSink>());
+    auto sink2 = std::make_shared<MockSink>();
 
     pt::flow::Pipeline::connect(src, mod2);
     pt::flow::Pipeline::connect(mod2, sink2);
 
     p.execute();
+
+    ASSERT_EQ(1, sink1->collected.size());
+    ASSERT_EQ(1, sink2->collected.size());
     EXPECT_EQ(11, sink1->collected[0]);
     EXPECT_EQ(15, sink2->collected[0]);
 }
 
 TEST(PipelineTests, EmptyPipelineDoesNothing) {
-    pt::flow::Pipeline p("p");
+    pt::flow::Pipeline p;
     EXPECT_NO_THROW(p.execute());
 }

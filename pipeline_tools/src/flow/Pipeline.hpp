@@ -1,19 +1,17 @@
 #pragma once
+
 #include <memory>
 #include <vector>
 #include <flow/Flow.hpp>
-
-#include "Source.hpp"
+#include <flow/blocks/Source.hpp>
 
 namespace pt::flow {
-    class Pipeline final : public Block {
+    class Pipeline {
     public:
-        explicit Pipeline(std::string name): Block(std::move(name)) {}
-
         // Add a flow object and auto-connect to previous
         template<typename F, typename FOut = typename F::output_type>
         std::shared_ptr<F> add(std::shared_ptr<F> f) {
-            if constexpr (std::derived_from<F, Source<FOut>>) {
+            if constexpr (std::derived_from<F, Source<FOut> >) {
                 bool sources_empty = sources.empty();
                 sources.push_back(f);
                 if (!sources_empty) {
@@ -38,7 +36,7 @@ namespace pt::flow {
         // Trigger execution (start from first node)
         void execute() const {
             if (!sources.empty()) {
-                for (auto& src : sources) {
+                for (auto &src: sources) {
                     src->execute();
                 }
             } else if (!nodes.empty()) {

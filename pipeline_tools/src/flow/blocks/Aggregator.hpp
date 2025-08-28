@@ -1,61 +1,63 @@
 #pragma once
 
-#include <flow/Flow.hpp>
+#include <cmath>
+#include <optional>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
-#include <optional>
+#include <flow/Flow.hpp>
 
 namespace pt::flow {
-
-    enum class AggregationPolicy {
-        NoAggregation,
-        Synchronized,
-        Continuous
-    };
-
-    template<typename Out>
+    template<typename In, typename Out>
     class Aggregator : public Flow {
     public:
-        explicit Aggregator(std::string name, AggregationPolicy aggregation_policy = AggregationPolicy::Synchronized):
-            Flow(std::move(name), ProductionPolicy::SingleOutput), policy(aggregation_policy) {}
+        using input_type = std::vector<In>;
+        using output_type = Out;
 
-        std::any process_any(const std::any& in, size_t producer_id = 0) override {
-            latest[producer_id] = std::any_cast<Out>(in);
+        Aggregator(): Flow(ProductionPolicy::Fanout) {
+        }
 
-            switch (policy) {
-                case AggregationPolicy::NoAggregation: {
-                    auto result = process({std::any_cast<Out>(in)});
-                    if (result) return std::any(*result);
-                    return {};
-                }
-
-                case AggregationPolicy::Synchronized: {
-                    if (latest.size() == producer_count) {
-                        std::vector<Out> collected;
-                        collected.reserve(latest.size());
-                        for (auto& [_, v] : latest)
-                            collected.push_back(v);
-                        latest.clear();
-                        auto result = process(collected);
-                        if (result) return std::any(*result);
-                    }
-                    return {};
-                }
-
-                case AggregationPolicy::Continuous: {
-                    std::vector<Out> collected;
-                    collected.reserve(latest.size());
-                    for (auto& [_, v] : latest)
-                        collected.push_back(v);
-                    auto result = process(collected);
-                    if (result) return std::any(*result);
-                    return {};
-                }
+        std::any process_any(std::any in, size_t producer_id) override {
+            auto idx = static_cast<size_t>(std::pow(2, producer_id));
+            if (state & idx) {
+                return {};
             }
+
+            In cast_input;
+            try {
+                cast_input = std::any_cast<In>(in);
+            } catch (const std::bad_any_cast& e) {
+                /// TODO: throw custom error
+                std::stringstream ss;
+                ss << __FILE__ << ":" << __LINE__ << ":" << e.what();
+                throw std::runtime_error(ss.str());
+            }
+
+            latest[producer_id] = cast_input;
+            state |= idx;
+
+            auto final_state = static_cast<size_t>(std::pow(2, producer_count)) - 1;
+            if (state == final_state) {
+                state = 0;
+                std::vector<In> collected;
+                collected.reserve(producer_count);
+
+                for (auto [_, v]: latest) {
+                    collected.emplace_back(v);
+                }
+
+                auto output = process(std::move(collected));
+                if (output.has_value()) {
+                    return output.value();
+                }
+
+                return {};
+            }
+
             return {};
         }
 
-        virtual std::optional<Out> process(const std::vector<Out>& inputs) = 0;
+        virtual std::optional<Out> process(std::vector<In> inputs) = 0;
 
     protected:
         size_t register_producer(std::shared_ptr<Flow>) override {
@@ -63,8 +65,8 @@ namespace pt::flow {
         }
 
     private:
-        AggregationPolicy policy;
+        size_t state{0};
         size_t producer_count{0};
-        std::unordered_map<size_t, Out> latest;
+        std::unordered_map<size_t, In> latest;
     };
 }

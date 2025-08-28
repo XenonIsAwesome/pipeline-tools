@@ -10,12 +10,11 @@ namespace pt::flow {
         using input_type = In;
         using output_type = Out;
 
-        explicit Module(std::string name, const ProductionPolicy policy):
-            Flow(std::move(name), policy) {}
+        explicit Module(const ProductionPolicy policy = ProductionPolicy::Fanout): Flow(policy) {}
 
-        virtual std::optional<Out> process(const In& input) = 0;
+        virtual std::optional<Out> process(In input) = 0;
 
-        std::any process_any(const std::any& in, size_t producer_id) override {
+        std::any process_any(std::any in, size_t producer_id) override {
             auto result = process(std::any_cast<In>(in));
             if (result.has_value())
                 return std::any(result.value());

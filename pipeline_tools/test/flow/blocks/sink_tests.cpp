@@ -1,53 +1,50 @@
-#include <gtest/gtest.h>
-#include <modules/PrintSink.hpp>
+#include <flow/Pipeline.hpp>
 #include <flow/blocks/Sink.hpp>
-
-#include "TestBlocks.hpp"
-#include "flow/blocks/Pipeline.hpp"
-#include "modules/NumberSource.h"
+#include <gtest/gtest.h>
+#include <modules/io/ConstantSource.hpp>
+#include "../FlowTestObjects.hpp"
 
 TEST(SinkTests, ProcessAnyInvokesProcess) {
-    TestSink sink;
+    MockSink sink;
     sink.process_any(5, 0);
     sink.process_any(10, 0);
 
-    EXPECT_EQ((std::vector<int>{5,10}), sink.collected);
+    EXPECT_EQ((std::vector{5,10}), sink.collected);
 }
 
 TEST(SinkTests, SinkInPipelineCollectsValues) {
-    pt::flow::Pipeline p("p");
+    pt::flow::Pipeline p;
 
-    p.add(std::make_shared<pt::modules::NumberSource>(42));
-    auto sink = p.add(std::make_shared<TestSink>());
+    p.add(std::make_shared<pt::modules::ConstantSource<int>>(42));
+    auto sink = p.add(std::make_shared<MockSink>());
 
     p.execute();
-    ASSERT_EQ(1u, sink->collected.size());
+    ASSERT_EQ(1, sink->collected.size());
     EXPECT_EQ(42, sink->collected[0]);
 }
 
 TEST(SinkTests, MultipleInputsCollected) {
-    TestSink sink;
+    MockSink sink;
     sink.process_any(1, 0);
     sink.process_any(2, 0);
     sink.process_any(3, 0);
 
-    EXPECT_EQ((std::vector<int>{1,2,3}), sink.collected);
+    EXPECT_EQ((std::vector{1,2,3}), sink.collected);
 }
 
 TEST(SinkTests, PipelineWithMultipleSources) {
-    pt::flow::Pipeline p("p");
+    pt::flow::Pipeline p;
 
-    auto src1 = p.add(std::make_shared<pt::modules::NumberSource>(7));
-    auto src2 = std::make_shared<pt::modules::NumberSource>(8);
+    auto src1 = p.add(std::make_shared<pt::modules::ConstantSource<int>>(7));
+    auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int>>(8));
 
-    auto sink = p.add(std::make_shared<TestSink>());
+    auto sink = p.add(std::make_shared<MockSink>());
     pt::flow::Pipeline::connect(src2, sink);
 
     // execute both sources
     p.execute();
-    src2->execute();
 
-    ASSERT_EQ(2u, sink->collected.size());
+    ASSERT_EQ(2, sink->collected.size());
     EXPECT_EQ(7, sink->collected[0]);
     EXPECT_EQ(8, sink->collected[1]);
 }
