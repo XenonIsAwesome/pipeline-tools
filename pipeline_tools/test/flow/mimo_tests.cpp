@@ -3,7 +3,7 @@
 #include <flow/blocks/Sink.hpp>
 #include <flow/blocks/Source.hpp>
 #include <flow/blocks/Aggregator.hpp>
-#include "FlowTestObjects.hpp"
+#include "flow_test_utils.hpp"
 #include <flow/Pipeline.hpp>
 #include <modules/io/ConstantSource.hpp>
 #include <modules/math/AdditionModule.hpp>

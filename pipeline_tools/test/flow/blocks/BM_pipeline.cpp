@@ -2,7 +2,7 @@
 #include <flow/Pipeline.hpp>
 #include <modules/io/ConstantSource.hpp>
 #include <modules/math/AdditionModule.hpp>
-#include "../FlowTestObjects.hpp"
+#include "../flow_test_utils.hpp"
 
 static void BM_Pipeline_ExecuteChain(benchmark::State &state) {
     for (auto _: state) {

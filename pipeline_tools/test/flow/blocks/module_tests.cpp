@@ -2,7 +2,7 @@
 #include <modules/math/AdditionModule.hpp>
 #include <modules/io/ConstantSource.hpp>
 #include <flow/blocks/Module.hpp>
-#include "../FlowTestObjects.hpp"
+#include "../flow_test_utils.hpp"
 #include <flow/Pipeline.hpp>
 
 TEST(ModuleTests, ProcessAnyInvokesProcess) {

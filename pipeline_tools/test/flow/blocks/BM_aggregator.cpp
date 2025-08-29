@@ -1,6 +1,6 @@
 #include <memory>
 #include <benchmark/benchmark.h>
-#include "../FlowTestObjects.hpp"
+#include "../flow_test_utils.hpp"
 #include <modules/math/SumAggregator.hpp>
 
 static void BM_Aggregator(benchmark::State &state) {

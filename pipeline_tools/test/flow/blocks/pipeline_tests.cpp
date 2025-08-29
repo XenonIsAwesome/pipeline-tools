@@ -3,7 +3,7 @@
 #include <modules/io/ConstantSource.hpp>
 #include <modules/math/AdditionModule.hpp>
 
-#include "../FlowTestObjects.hpp"
+#include "../flow_test_utils.hpp"
 
 TEST(PipelineTests, AutoConnectSingleChain) {
     pt::flow::Pipeline p;

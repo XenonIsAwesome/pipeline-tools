@@ -2,7 +2,7 @@
 #include <flow/blocks/Aggregator.hpp>
 #include <gtest/gtest.h>
 #include <modules/io/ConstantSource.hpp>
-#include "../FlowTestObjects.hpp"
+#include "../flow_test_utils.hpp"
 #include <modules/math/SumAggregator.hpp>
 
 

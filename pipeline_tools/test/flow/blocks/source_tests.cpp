@@ -2,7 +2,7 @@
 #include <flow/blocks/Source.hpp>
 #include <gtest/gtest.h>
 #include <modules/io/ConstantSource.hpp>
-#include "../FlowTestObjects.hpp"
+#include "../flow_test_utils.hpp"
 
 TEST(SourceTests, ProcessAnyInvokesProcess) {
     pt::modules::ConstantSource src(123);

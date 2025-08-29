@@ -1,5 +1,5 @@
 #include <benchmark/benchmark.h>
-#include "../FlowTestObjects.hpp"
+#include "../flow_test_utils.hpp"
 
 static void BM_Sink_ProcessAny(benchmark::State &state) {
     MockSink sink;
