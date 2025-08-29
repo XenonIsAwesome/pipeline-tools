@@ -4,10 +4,10 @@
 #include <flow/blocks/Source.hpp>
 #include <flow/blocks/Aggregator.hpp>
 #include "FlowTestObjects.hpp"
-#include "flow/Pipeline.hpp"
-#include "modules/io/ConstantSource.hpp"
-#include "modules/math/AdditionModule.hpp"
-#include "modules/math/SumAggregator.hpp"
+#include <flow/Pipeline.hpp>
+#include <modules/io/ConstantSource.hpp>
+#include <modules/math/AdditionModule.hpp>
+#include <modules/math/SumAggregator.hpp>
 
 // --- Tests ---
 

@@ -1,8 +1,7 @@
 #pragma once
 
 #include <flow/blocks/Module.hpp>
-
-#include "concepts.h"
+#include <modules/math/concepts.h>
 
 
 namespace pt::modules {

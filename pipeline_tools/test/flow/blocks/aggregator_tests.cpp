@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <modules/io/ConstantSource.hpp>
 #include "../FlowTestObjects.hpp"
-#include "modules/math/SumAggregator.hpp"
+#include <modules/math/SumAggregator.hpp>
 
 
 TEST(AggregatorTests, Aggregation) {

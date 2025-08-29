@@ -1,7 +1,7 @@
 #include <memory>
 #include <benchmark/benchmark.h>
 #include "../FlowTestObjects.hpp"
-#include "modules/math/SumAggregator.hpp"
+#include <modules/math/SumAggregator.hpp>
 
 static void BM_Aggregator_Synchronized(benchmark::State &state) {
     pt::modules::SumAggregator<int, int> agg{0};

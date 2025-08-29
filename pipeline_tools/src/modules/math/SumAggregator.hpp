@@ -1,8 +1,7 @@
 #pragma once
 
 #include <flow/blocks/Aggregator.hpp>
-
-#include "concepts.h"
+#include <modules/math/concepts.h>
 
 namespace pt::modules {
     template<typename In, typename Out>

@@ -3,7 +3,7 @@
 #include <modules/io/ConstantSource.hpp>
 #include <flow/blocks/Module.hpp>
 #include "../FlowTestObjects.hpp"
-#include "flow/Pipeline.hpp"
+#include <flow/Pipeline.hpp>
 
 TEST(ModuleTests, ProcessAnyInvokesProcess) {
     pt::modules::AdditionModule<int, int, int> mod(10);
