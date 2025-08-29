@@ -105,7 +105,7 @@ TEST(MiMoTests, ManyOutputsSingleConsumer) {
 }
 
 TEST(MiMoTests, ManyOutputsManyConsumers) {
-    class RoundRobinModule : public pt::flow::Module<int, std::vector<int>> {
+    class RoundRobinModule : public pt::flow::Module<int, std::vector<int> > {
     public:
         RoundRobinModule(): Module(pt::flow::ProductionPolicy::RoundRobin) {
         }

@@ -5,7 +5,7 @@
 
 namespace pt::flow {
     template<typename Out>
-    class Source: public FlowWithOutput<Out> {
+    class Source : public FlowWithOutput<Out> {
     public:
         explicit Source(const ProductionPolicy policy = ProductionPolicy::Fanout): FlowWithOutput<Out>(policy) {
         }

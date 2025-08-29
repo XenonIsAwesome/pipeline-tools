@@ -9,7 +9,7 @@
 
 namespace pt::flow {
     template<typename In, typename Out>
-    class Aggregator: public FlowWithOutput<Out> {
+    class Aggregator : public FlowWithOutput<Out> {
     public:
         using input_type = std::vector<In>;
 

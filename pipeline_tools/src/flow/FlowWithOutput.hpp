@@ -8,7 +8,8 @@ namespace pt::flow {
     public:
         using output_type = Out;
 
-        FlowWithOutput(ProductionPolicy policy = ProductionPolicy::Fanout): Flow(policy) {}
+        FlowWithOutput(ProductionPolicy policy = ProductionPolicy::Fanout): Flow(policy) {
+        }
 
     protected:
         void round_robin(std::any output) override {
@@ -18,15 +19,16 @@ namespace pt::flow {
 
     // specialization for when Out itself is a vector (e.g. Out = std::vector<int>)
     template<typename T>
-    class FlowWithOutput<std::vector<T>> : public Flow {
+    class FlowWithOutput<std::vector<T> > : public Flow {
     public:
         using output_type = std::vector<T>;
 
-        FlowWithOutput(ProductionPolicy policy = ProductionPolicy::Fanout): Flow(policy) {}
+        FlowWithOutput(ProductionPolicy policy = ProductionPolicy::Fanout): Flow(policy) {
+        }
 
     protected:
         void round_robin(std::any output) override {
-            auto outputs = std::any_cast<std::vector<T>>(std::move(output));
+            auto outputs = std::any_cast<std::vector<T> >(std::move(output));
             size_t max_size = std::min(outputs.size(), next_nodes.size());
 
             for (size_t i = 0; i < max_size; i++) {
