@@ -42,7 +42,8 @@ namespace pt::flow {
                 if (!nodes.empty()) {
                     throw std::runtime_error("Add all the sources FIRST!");
                 }
-            } else if constexpr (std::derived_from<F, Module<FIn, FOut>> || std::derived_from<F, Aggregator<FIn, FOut>> || std::derived_from<F, Sink<FIn>>) {
+            } else if constexpr (std::derived_from<F, Module<FIn, FOut> > || std::derived_from<F, Aggregator<FIn,
+                                     FOut> > || std::derived_from<F, Sink<FIn> >) {
                 if (!nodes.empty()) {
                     nodes.back()->connect(f);
                 } else if (!sources.empty()) {
@@ -52,7 +53,7 @@ namespace pt::flow {
                 }
 
                 // Only add module and aggregator to the modules
-                if constexpr (!std::derived_from<F, Sink<FIn>>) {
+                if constexpr (!std::derived_from<F, Sink<FIn> >) {
                     nodes.push_back(f);
                 }
             } else {

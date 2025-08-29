@@ -8,7 +8,8 @@ namespace pt::modules {
         requires concepts::Addable<In, In, Out>
     class SumAggregator : public flow::Aggregator<In, Out> {
     public:
-        SumAggregator(Out default_value): flow::Aggregator<In, Out>(), default_value(default_value) {}
+        SumAggregator(Out default_value): flow::Aggregator<In, Out>(), default_value(default_value) {
+        }
 
         std::optional<Out> process(std::vector<In> inputs) {
             Out sum = default_value;

@@ -16,7 +16,7 @@ TEST(SinkTests, ProcessAnyInvokesProcess) {
 TEST(SinkTests, SinkInPipelineCollectsValues) {
     pt::flow::Pipeline p;
 
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(42));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(42));
     auto sink = p.add(std::make_shared<MockSink>());
 
     p.execute();
