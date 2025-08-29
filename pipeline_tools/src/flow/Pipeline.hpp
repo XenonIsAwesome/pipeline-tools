@@ -14,8 +14,9 @@ namespace pt::flow {
         /**
          * Add a flow object to the pipeline.
          *
-         * Pipeline::add will auto-wire all sources to the first module.<br/>
-         * Pipeline::add will auto-wire the last module to all sinks.
+         * Pipeline::add will auto-wire all sources to the first module / aggregators.<br/>
+         * Pipeline::add will auto-wire modules & aggregators linearly.<br/>
+         * Pipeline::add will auto-wire the last module / aggregator to all sinks.
          *
          * \image html PipelineBehaviour.png
          *

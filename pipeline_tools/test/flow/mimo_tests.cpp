@@ -19,6 +19,7 @@ TEST(MiMoTests, SingleInputSingleProducer) {
     auto sink = p.add(std::make_shared<MockSink>());
 
     p.execute();
+
     EXPECT_EQ((std::vector{2}), sink->collected);
 }
 
@@ -61,6 +62,7 @@ TEST(MiMoTests, ManyInputsManyProducersAggregator) {
     auto sink = p.add(std::make_shared<MockSink>());
 
     p.execute();
+
     ASSERT_EQ(1, sink->collected.size());
     EXPECT_EQ(3, sink->collected[0]);
 }
