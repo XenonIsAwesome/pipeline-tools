@@ -105,13 +105,13 @@ TEST(MiMoTests, ManyOutputsSingleConsumer) {
 }
 
 TEST(MiMoTests, ManyOutputsManyConsumers) {
-    class RoundRobinModule : public pt::flow::Module<int, std::vector<std::any> > {
+    class RoundRobinModule : public pt::flow::Module<int, std::vector<int>> {
     public:
         RoundRobinModule(): Module(pt::flow::ProductionPolicy::RoundRobin) {
         }
 
-        std::optional<std::vector<std::any> > process(int input) override {
-            return std::vector<std::any>{input, input + 1};
+        std::optional<std::vector<int> > process(int input) override {
+            return std::vector{input, input + 1};
         }
     };
 

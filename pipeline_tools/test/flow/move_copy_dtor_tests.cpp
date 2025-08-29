@@ -47,16 +47,16 @@ TEST(MoveCopyTests, FanoutCopiesToAllButMovesToLast) {
 TEST(MoveCopyTests, RoundRobinMovesWithoutCopies) {
     Tracer::reset();
 
-    class RoundRobinSource : public pt::flow::Source<std::vector<std::any> > {
+    class RoundRobinSource : public pt::flow::Source<std::vector<Tracer> > {
     public:
         RoundRobinSource(): Source(pt::flow::ProductionPolicy::RoundRobin) {
         }
 
-        std::optional<std::vector<std::any> > process() override {
-            std::vector<std::any> v;
+        std::optional<std::vector<Tracer> > process() override {
+            std::vector<Tracer> v;
             v.reserve(2); // avoid reallocations
-            v.emplace_back(std::make_any<Tracer>(1));
-            v.emplace_back(std::make_any<Tracer>(2));
+            v.emplace_back(1);
+            v.emplace_back(2);
             return v;
         }
     };

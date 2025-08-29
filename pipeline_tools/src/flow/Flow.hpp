@@ -35,13 +35,7 @@ namespace pt::flow {
             if (policy == ProductionPolicy::NoConsumer) return;
 
             if (policy == ProductionPolicy::RoundRobin) {
-                auto outputs = std::any_cast<std::vector<std::any> >(std::move(output));
-                size_t max_size = std::min(outputs.size(), next_nodes.size());
-
-                for (size_t i = 0; i < max_size; i++) {
-                    auto &[next, id] = next_nodes[i];
-                    next->execute(std::move(outputs.at(i)), id);
-                }
+                round_robin(std::move(output));
             } else if (policy == ProductionPolicy::Fanout) {
                 for (size_t i = 0; i < next_nodes.size() - 1; ++i) {
                     auto &[next, id] = next_nodes[i];
@@ -64,9 +58,15 @@ namespace pt::flow {
         // Consumer override point (e.g. Aggregator)
         virtual size_t register_producer(std::shared_ptr<Flow>) { return 0; }
 
-    private:
-        ProductionPolicy policy;
+        // Consumer override point (e.g. Aggregator, Source, Module)
+        virtual void round_robin(std::any output) {
+            throw std::runtime_error("RoundRobin not supported for this type");
+        }
+
         // (next node, producer_id for *that* consumer)
         std::vector<std::pair<std::shared_ptr<Flow>, size_t> > next_nodes;
+
+    private:
+        ProductionPolicy policy;
     };
 } // namespace pt::flow
