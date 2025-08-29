@@ -27,9 +27,13 @@ Test Benchmark:
   stage: test
   script:
     - cmake --build $BUILD_DIR --target libpt-benchmark
-    - ./$BUILD_DIR/pipeline_tools/test/libpt-benchmark
+    - mkdir -p ./out
+    - ./$BUILD_DIR/pipeline_tools/test/libpt-benchmark | tee ./out/benchmark.log
   needs:
     - Build All
+  artifacts:
+    paths:
+      - out/
 
 # Only run on main branch, merge requests, and tags
 workflow:

@@ -27,5 +27,13 @@ jobs:
       - name: Run GTest
         run: ./build/pipeline_tools/test/libpt-gtest
 
-      - name: Run Benchmarks
-        run: ./build/pipeline_tools/test/libpt-benchmark
+      - name: Run Benchmarks and Save Output
+        run: |
+          mkdir -p ./out
+          ./build/pipeline_tools/test/libpt-benchmark | tee ./out/benchmark.log
+
+      - name: Upload Benchmark Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: out/benchmark.log
