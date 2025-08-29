@@ -32,8 +32,7 @@ namespace pt::flow {
         template<
             typename F,
             typename FIn = typename F::input_type,
-            typename FOut = typename F::output_type
-        >
+            typename FOut = typename F::output_type>
         std::shared_ptr<F> add(std::shared_ptr<F> f) {
             bool add_node = true;
             bool connect_to_last_node = !nodes.empty();
