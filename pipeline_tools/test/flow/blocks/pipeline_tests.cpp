@@ -23,8 +23,8 @@ TEST(PipelineTests, ManualConnectBranching) {
     auto sink1 = p.add(std::make_shared<MockSink>());
     auto sink2 = std::make_shared<MockSink>();
 
-    pt::flow::Pipeline::connect(src, mod2);
-    pt::flow::Pipeline::connect(mod2, sink2);
+    pt::flow::connect(src, mod2);
+    pt::flow::connect(mod2, sink2);
 
     p.execute();
 

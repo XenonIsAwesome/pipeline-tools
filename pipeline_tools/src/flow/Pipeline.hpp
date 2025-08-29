@@ -4,14 +4,36 @@
 #include <vector>
 #include <flow/Flow.hpp>
 #include <flow/blocks/Source.hpp>
-
-#include "blocks/Sink.hpp"
+#include <flow/blocks/Sink.hpp>
 
 namespace pt::flow {
     class Pipeline {
     public:
-        // Add a flow object and auto-connect to previous
-        template<typename F, typename FIn = typename F::input_type, typename FOut = typename F::output_type>
+        /**
+         * Add a flow object to the pipeline.
+         *
+         * Pipeline::add will auto-wire many source to the first module.
+         * Pipeline::add will auto-wire the last module to many sinks.
+         *
+         *      Source3 ---\             --> Sink3
+         *                  v           /
+         *      Source1 --> Module --> ... --> Sink1
+         *                  ^           \
+         *      Source2 ---/             --> Sink2
+         *
+         * @tparam F Flow object (type)
+         * @tparam FIn Input type of the flow object
+         * @tparam FOut Output type of the flow object
+         * @param f Flow object to add to the pipeline
+         * @return The same flow object that was added to the pipeline
+         *
+         * TODO: add auto-connect from all sources to first node.
+         */
+        template<
+            typename F,
+            typename FIn = typename F::input_type,
+            typename FOut = typename F::output_type
+        >
         std::shared_ptr<F> add(std::shared_ptr<F> f) {
             bool add_node = true;
             bool connect_to_last_node = !nodes.empty();
@@ -34,13 +56,9 @@ namespace pt::flow {
             return f;
         }
 
-        // Manual connect (for branching/fanout/etc.)
-        static void connect(const std::shared_ptr<Flow> &from,
-                            const std::shared_ptr<Flow> &to) {
-            from->connect(to);
-        }
-
-        // Trigger execution (start from first node)
+        /**
+         * Trigger execution (start from first node / sources)
+         */
         void execute() const {
             if (!sources.empty()) {
                 for (auto &src: sources) {

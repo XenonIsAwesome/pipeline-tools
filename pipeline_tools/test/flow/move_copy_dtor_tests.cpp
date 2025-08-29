@@ -2,7 +2,6 @@
 #include "flow_test_utils.hpp"
 #include <flow/Pipeline.hpp>
 #include <flow/blocks/Source.hpp>
-#include <flow/blocks/Module.hpp>
 #include <flow/blocks/Sink.hpp>
 
 // --- Custom test blocks ---
@@ -31,7 +30,7 @@ TEST(MoveCopyTests, FanoutCopiesToAllButMovesToLast) {
     auto src = p.add(std::make_shared<TracerSource>());
     auto sink1 = p.add(std::make_shared<TracerSink>());
     auto sink2 = std::make_shared<TracerSink>();
-    pt::flow::Pipeline::connect(src, sink2);
+    pt::flow::connect(src, sink2);
 
     p.execute();
 

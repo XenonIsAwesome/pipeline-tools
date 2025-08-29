@@ -28,7 +28,7 @@ TEST(MiMoTests, SingleInputManyProducers) {
     auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(4));
     auto mod = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(10));
     auto sink = p.add(std::make_shared<MockSink>());
-    pt::flow::Pipeline::connect(src2, mod); // manually connect into same module chain
+    pt::flow::connect(src2, mod); // manually connect into same module chain
 
     p.execute();
 
@@ -57,7 +57,7 @@ TEST(MiMoTests, ManyInputsManyProducersAggregator) {
     auto src1 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
     auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(2));
     auto agg = p.add(std::make_shared<pt::modules::SumAggregator<int, int> >(0));
-    pt::flow::Pipeline::connect(src2, agg);
+    pt::flow::connect(src2, agg);
 
     auto sink = p.add(std::make_shared<MockSink>());
 
@@ -74,8 +74,8 @@ TEST(MiMoTests, SingleOutputManyConsumers) {
     auto sink1 = p.add(std::make_shared<MockSink>());
     auto sink2 = std::make_shared<MockSink>();
     auto sink3 = std::make_shared<MockSink>();
-    pt::flow::Pipeline::connect(mod, sink2);
-    pt::flow::Pipeline::connect(mod, sink3);
+    pt::flow::connect(mod, sink2);
+    pt::flow::connect(mod, sink3);
 
     p.execute();
 
@@ -120,7 +120,7 @@ TEST(MiMoTests, ManyOutputsManyConsumers) {
     auto mod = p.add(std::make_shared<RoundRobinModule>());
     auto sink1 = p.add(std::make_shared<MockSink>());
     auto sink2 = std::make_shared<MockSink>();
-    pt::flow::Pipeline::connect(mod, sink2);
+    pt::flow::connect(mod, sink2);
 
     p.execute();
 

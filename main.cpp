@@ -18,12 +18,12 @@ int main() {
     auto mod_c = std::make_shared<pt::modules::AdditionModule<int, int, int> >(3);
     p.add(mod_c);
 
-    pt::flow::Pipeline::connect(mod_a, mod_c);
+    pt::flow::connect(mod_a, mod_c);
 
     auto sink = std::make_shared<pt::modules::PrintSink<int> >();
     p.add(sink);
 
-    pt::flow::Pipeline::connect(mod_b, sink);
+    pt::flow::connect(mod_b, sink);
 
     p.execute();
 }

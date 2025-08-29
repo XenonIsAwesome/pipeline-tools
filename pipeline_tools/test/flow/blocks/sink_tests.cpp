@@ -38,7 +38,7 @@ TEST(SinkTests, PipelineWithMultipleSources) {
     p.add(std::make_shared<pt::modules::ConstantSource<int> >(7));
     auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(8));
     auto sink = p.add(std::make_shared<MockSink>());
-    pt::flow::Pipeline::connect(src2, sink);
+    pt::flow::connect(src2, sink);
 
     // execute both sources
     p.execute();

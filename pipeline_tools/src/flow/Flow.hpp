@@ -69,4 +69,14 @@ namespace pt::flow {
     private:
         ProductionPolicy policy;
     };
+
+    /**
+     * Manual connect (for branching/fanout/etc.)
+     * @param from The flow object to wire from
+     * @param to The flow object to wire to
+     */
+    static void connect(const std::shared_ptr<Flow> &from,
+                        const std::shared_ptr<Flow> &to) {
+        from->connect(to);
+    }
 } // namespace pt::flow
