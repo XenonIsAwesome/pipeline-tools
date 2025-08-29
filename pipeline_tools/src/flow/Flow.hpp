@@ -35,7 +35,7 @@ namespace pt::flow {
             if (policy == ProductionPolicy::NoConsumer) return;
 
             if (policy == ProductionPolicy::RoundRobin) {
-                auto outputs = std::any_cast<std::vector<std::any> >(output);
+                auto outputs = std::any_cast<std::vector<std::any>>(std::move(output));
                 size_t max_size = std::min(outputs.size(), next_nodes.size());
 
                 for (size_t i = 0; i < max_size; i++) {

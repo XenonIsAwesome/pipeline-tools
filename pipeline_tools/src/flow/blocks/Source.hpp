@@ -17,7 +17,7 @@ namespace pt::flow {
         std::any process_any(std::any, size_t producer_id) override {
             auto result = process();
             if (result.has_value())
-                return std::any(result.value());
+                return std::move(result.value());
             return std::nullopt;
         }
     };

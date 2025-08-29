@@ -5,25 +5,32 @@
 #include <flow/Flow.hpp>
 #include <flow/blocks/Source.hpp>
 
+#include "blocks/Sink.hpp"
+
 namespace pt::flow {
     class Pipeline {
     public:
         // Add a flow object and auto-connect to previous
-        template<typename F, typename FOut = typename F::output_type>
+        template<typename F, typename FIn = typename F::input_type, typename FOut = typename F::output_type>
         std::shared_ptr<F> add(std::shared_ptr<F> f) {
+            bool add_node = true;
+            bool connect_to_last_node = !nodes.empty();
+
             if constexpr (std::derived_from<F, Source<FOut> >) {
-                bool sources_empty = sources.empty();
+                add_node = sources.empty();
+                connect_to_last_node = false;
                 sources.push_back(f);
-                if (!sources_empty) {
-                    return f;
-                }
+            } else if constexpr (std::derived_from<F, Sink<FIn>>) {
+                add_node = false;
             }
 
-            if (!nodes.empty()) {
+            if (connect_to_last_node) {
                 nodes.back()->connect(f); // auto-wire previous -> current
             }
 
-            nodes.push_back(f);
+            if (add_node) {
+                nodes.push_back(f);
+            }
             return f;
         }
 
@@ -45,7 +52,8 @@ namespace pt::flow {
         }
 
     private:
-        std::vector<std::shared_ptr<Flow> > sources{};
-        std::vector<std::shared_ptr<Flow> > nodes{};
+        bool sink_inserted{false};
+        std::vector<std::shared_ptr<Flow>> sources{};
+        std::vector<std::shared_ptr<Flow>> nodes{};
     };
 } // namespace pt::flow

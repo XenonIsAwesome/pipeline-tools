@@ -8,15 +8,14 @@
 
 TEST(AggregatorTests, Aggregation) {
     pt::flow::Pipeline p;
-    auto src1 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(2));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(2));
     auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(3));
     auto agg = p.add(std::make_shared<pt::modules::SumAggregator<int, int> >(0));
     pt::flow::Pipeline::connect(src2, agg);
 
     auto sink = p.add(std::make_shared<MockSink>());
     p.execute();
-    src2->execute();
 
-    ASSERT_EQ(1u, sink->collected.size());
+    ASSERT_EQ(1, sink->collected.size());
     EXPECT_EQ(5, sink->collected[0]);
 }

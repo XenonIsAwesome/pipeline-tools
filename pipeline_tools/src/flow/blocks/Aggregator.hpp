@@ -48,7 +48,7 @@ namespace pt::flow {
 
                 auto output = process(std::move(collected));
                 if (output.has_value()) {
-                    return output.value();
+                    return std::move(output.value());
                 }
 
                 return {};

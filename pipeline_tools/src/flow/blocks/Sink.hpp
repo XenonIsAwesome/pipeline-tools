@@ -17,7 +17,7 @@ namespace pt::flow {
         std::any process_any(std::any in, size_t producer_id) override {
             In cast_input;
             try {
-                cast_input = std::any_cast<In>(in);
+                cast_input = std::any_cast<In>(std::move(in));
             } catch (const std::bad_any_cast &e) {
                 /// TODO: throw custom error
                 std::stringstream ss;
@@ -26,7 +26,7 @@ namespace pt::flow {
                 ss << e.what();
                 throw std::runtime_error(ss.str());
             }
-            process(cast_input);
+            process(std::move(cast_input));
             return {};
         }
     };
