@@ -5,6 +5,8 @@
 #include <flow/Flow.hpp>
 #include <flow/blocks/Source.hpp>
 #include <flow/blocks/Sink.hpp>
+#include <flow/blocks/Aggregator.hpp>
+#include <flow/blocks/Module.hpp>
 
 namespace pt::flow {
     class Pipeline {
@@ -12,45 +14,52 @@ namespace pt::flow {
         /**
          * Add a flow object to the pipeline.
          *
-         * Pipeline::add will auto-wire many source to the first module.
-         * Pipeline::add will auto-wire the last module to many sinks.
+         * Pipeline::add will auto-wire all sources to the first module.<br/>
+         * Pipeline::add will auto-wire the last module to all sinks.
          *
-         *      Source3 ---\             --> Sink3
-         *                  v           /
-         *      Source1 --> Module --> ... --> Sink1
-         *                  ^           \
-         *      Source2 ---/             --> Sink2
+         * \image html PipelineBehaviour.png
          *
-         * @tparam F Flow object (type)
+         * Usage:
+         *   1. Add ALL sources
+         *   2. Add ALL modules/aggregators (if there are any)
+         *   3. Add ALL sinks
+         *
+         * Not using the function correctly will cause runtime errors / segfaults.
+         *
+         * @tparam F pt::flow::Flow object (type)
          * @tparam FIn Input type of the flow object
          * @tparam FOut Output type of the flow object
-         * @param f Flow object to add to the pipeline
+         * @param f pt::flow::Flow object to add to the pipeline
          * @return The same flow object that was added to the pipeline
-         *
-         * TODO: add auto-connect from all sources to first node.
          */
         template<
             typename F,
             typename FIn = typename F::input_type,
             typename FOut = typename F::output_type>
         std::shared_ptr<F> add(std::shared_ptr<F> f) {
-            bool add_node = true;
-            bool connect_to_last_node = !nodes.empty();
-
             if constexpr (std::derived_from<F, Source<FOut> >) {
-                add_node = sources.empty();
-                connect_to_last_node = false;
                 sources.push_back(f);
-            } else if constexpr (std::derived_from<F, Sink<FIn> >) {
-                add_node = false;
-            }
+                if (!nodes.empty()) {
+                    throw std::runtime_error("Add all the sources FIRST!");
+                }
+            } else if constexpr (std::derived_from<F, Module<FIn, FOut>> || std::derived_from<F, Aggregator<FIn, FOut>> || std::derived_from<F, Sink<FIn>>) {
+                if (!nodes.empty()) {
+                    nodes.back()->connect(f);
+                } else if (!sources.empty()) {
+                    for (auto &src: sources) {
+                        src->connect(f);
+                    }
+                }
 
-            if (connect_to_last_node) {
-                nodes.back()->connect(f); // auto-wire previous -> current
-            }
-
-            if (add_node) {
-                nodes.push_back(f);
+                // Only add module and aggregator to the modules
+                if constexpr (!std::derived_from<F, Sink<FIn>>) {
+                    nodes.push_back(f);
+                }
+            } else {
+                // TODO: raise custom error
+                std::stringstream ss;
+                ss << "Unknown flow object type: " << typeid(f).name();
+                throw std::runtime_error(ss.str());
             }
             return f;
         }
@@ -69,7 +78,6 @@ namespace pt::flow {
         }
 
     private:
-        bool sink_inserted{false};
         std::vector<std::shared_ptr<Flow> > sources{};
         std::vector<std::shared_ptr<Flow> > nodes{};
     };

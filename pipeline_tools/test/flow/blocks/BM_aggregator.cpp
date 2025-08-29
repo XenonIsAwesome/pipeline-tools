@@ -9,5 +9,4 @@ static void BM_Aggregator(benchmark::State &state) {
         agg.process_any(5, 0);
     }
 }
-
 BENCHMARK(BM_Aggregator);

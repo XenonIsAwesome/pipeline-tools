@@ -11,7 +11,7 @@ namespace pt::flow {
     template<typename In, typename Out>
     class Aggregator : public FlowWithOutput<Out> {
     public:
-        using input_type = std::vector<In>;
+        using input_type = In;
 
         Aggregator(): FlowWithOutput<Out>(ProductionPolicy::Fanout) {
         }
@@ -26,7 +26,7 @@ namespace pt::flow {
             try {
                 cast_input = std::any_cast<In>(in);
             } catch (const std::bad_any_cast &e) {
-                /// TODO: throw custom error
+                // TODO: throw custom error
                 std::stringstream ss;
                 ss << __FILE__ << ":" << __LINE__ << ":" << e.what();
                 throw std::runtime_error(ss.str());

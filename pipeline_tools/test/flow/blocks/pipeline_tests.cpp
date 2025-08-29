@@ -7,9 +7,11 @@
 
 TEST(PipelineTests, AutoConnectSingleChain) {
     pt::flow::Pipeline p;
+
     p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
     p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(2));
     auto sink = p.add(std::make_shared<MockSink>());
+
     p.execute();
 
     EXPECT_EQ(std::vector{3}, sink->collected);
@@ -17,12 +19,15 @@ TEST(PipelineTests, AutoConnectSingleChain) {
 
 TEST(PipelineTests, ManualConnectBranching) {
     pt::flow::Pipeline p;
+
+    // Auto-wired
     auto src = p.add(std::make_shared<pt::modules::ConstantSource<int> >(10));
-    auto mod1 = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(1));
-    auto mod2 = std::make_shared<pt::modules::AdditionModule<int, int, int> >(5);
+    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(1));
     auto sink1 = p.add(std::make_shared<MockSink>());
     auto sink2 = std::make_shared<MockSink>();
 
+    // Manual connect
+    auto mod2 = std::make_shared<pt::modules::AdditionModule<int, int, int> >(5);
     pt::flow::connect(src, mod2);
     pt::flow::connect(mod2, sink2);
 

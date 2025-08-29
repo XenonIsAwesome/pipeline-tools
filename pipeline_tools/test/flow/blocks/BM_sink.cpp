@@ -7,5 +7,4 @@ static void BM_Sink_ProcessAny(benchmark::State &state) {
         sink.process_any(123, 0);
     }
 }
-
 BENCHMARK(BM_Sink_ProcessAny);

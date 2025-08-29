@@ -7,5 +7,4 @@ static void BM_NumberSource_ProcessAny(benchmark::State &state) {
         benchmark::DoNotOptimize(src.process_any({}, 0));
     }
 }
-
 BENCHMARK(BM_NumberSource_ProcessAny);

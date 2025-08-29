@@ -27,10 +27,10 @@ TEST(MoveCopyTests, FanoutCopiesToAllButMovesToLast) {
     Tracer::reset();
 
     pt::flow::Pipeline p;
-    auto src = p.add(std::make_shared<TracerSource>());
+
+    p.add(std::make_shared<TracerSource>());
     auto sink1 = p.add(std::make_shared<TracerSink>());
-    auto sink2 = std::make_shared<TracerSink>();
-    pt::flow::connect(src, sink2);
+    auto sink2 = p.add(std::make_shared<TracerSink>());
 
     p.execute();
 
@@ -61,6 +61,7 @@ TEST(MoveCopyTests, RoundRobinMovesWithoutCopies) {
     };
 
     pt::flow::Pipeline p;
+
     p.add(std::make_shared<RoundRobinSource>());
     auto sink1 = p.add(std::make_shared<TracerSink>());
     auto sink2 = p.add(std::make_shared<TracerSink>());
@@ -76,12 +77,17 @@ TEST(MoveCopyTests, RoundRobinMovesWithoutCopies) {
 }
 
 TEST(MoveCopyTests, DestructorsCalledAfterPipelineScope) {
-    Tracer::reset(); {
+    Tracer::reset();
+
+    {
         pt::flow::Pipeline p;
+
         p.add(std::make_shared<TracerSource>());
         p.add(std::make_shared<TracerSink>());
+
         p.execute();
     }
+
     // After pipeline destruction, at least one dtor should be called
     EXPECT_NE(std::find(Tracer::events.begin(), Tracer::events.end(), "dtor"), Tracer::events.end());
 }

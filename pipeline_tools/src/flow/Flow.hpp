@@ -9,9 +9,9 @@
 
 namespace pt::flow {
     enum class ProductionPolicy {
-        NoConsumer, /*< Special case for Sinks */
-        RoundRobin, /*< next_nodes.at(i)->execute(outputs.at(i)) */
-        Fanout /*< copy to next_nodes.size() - 1 consumers, std::move to the last */
+        NoConsumer, /**< Special case for sinks */
+        RoundRobin, /**< Give each output to each consumer: <br>`consumers[i]->consume(outputs[i])` */
+        Fanout /**< Copy output to all consumers but move to the last */
     };
 
     class Flow {

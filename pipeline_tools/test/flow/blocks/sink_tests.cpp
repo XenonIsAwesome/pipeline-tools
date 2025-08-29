@@ -6,6 +6,7 @@
 
 TEST(SinkTests, ProcessAnyInvokesProcess) {
     MockSink sink;
+
     sink.process_any(5, 0);
     sink.process_any(10, 0);
 
@@ -15,7 +16,7 @@ TEST(SinkTests, ProcessAnyInvokesProcess) {
 TEST(SinkTests, SinkInPipelineCollectsValues) {
     pt::flow::Pipeline p;
 
-    p.add(std::make_shared<pt::modules::ConstantSource<int> >(42));
+    p.add(std::make_shared<pt::modules::ConstantSource<int>>(42));
     auto sink = p.add(std::make_shared<MockSink>());
 
     p.execute();
@@ -25,6 +26,7 @@ TEST(SinkTests, SinkInPipelineCollectsValues) {
 
 TEST(SinkTests, MultipleInputsCollected) {
     MockSink sink;
+
     sink.process_any(1, 0);
     sink.process_any(2, 0);
     sink.process_any(3, 0);
@@ -36,9 +38,8 @@ TEST(SinkTests, PipelineWithMultipleSources) {
     pt::flow::Pipeline p;
 
     p.add(std::make_shared<pt::modules::ConstantSource<int> >(7));
-    auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(8));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(8));
     auto sink = p.add(std::make_shared<MockSink>());
-    pt::flow::connect(src2, sink);
 
     // execute both sources
     p.execute();

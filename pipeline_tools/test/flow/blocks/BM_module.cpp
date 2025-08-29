@@ -8,5 +8,4 @@ static void BM_AddModule_ProcessAny(benchmark::State &state) {
         benchmark::DoNotOptimize(mod.process_any(5, 0));
     }
 }
-
 BENCHMARK(BM_AddModule_ProcessAny);

@@ -10,6 +10,7 @@ TEST(ModuleTests, ProcessAnyInvokesProcess) {
 
     // `process_any` should unwrap -> call process -> wrap back into std::any
     auto out_any = mod.process_any(5, 0);
+
     ASSERT_TRUE(out_any.has_value());
     EXPECT_EQ(15, std::any_cast<int>(out_any));
 }
@@ -17,6 +18,7 @@ TEST(ModuleTests, ProcessAnyInvokesProcess) {
 TEST(ModuleTests, ProcessAnyHandlesEmptyOptional) {
     // A Module that always returns std::nullopt
     NullModule mod;
+
     auto out_any = mod.process_any(123, 0);
 
     // Expect "empty" any
