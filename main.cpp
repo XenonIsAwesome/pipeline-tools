@@ -7,20 +7,20 @@
 int main() {
     pt::flow::Pipeline p;
 
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(1));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
 
-    auto mod_a = std::make_shared<pt::modules::AdditionModule<int, int, int>>(1);
+    auto mod_a = std::make_shared<pt::modules::AdditionModule<int, int, int> >(1);
     p.add(mod_a);
 
-    auto mod_b = std::make_shared<pt::modules::AdditionModule<int, int, int>>(2);
+    auto mod_b = std::make_shared<pt::modules::AdditionModule<int, int, int> >(2);
     p.add(mod_b);
 
-    auto mod_c = std::make_shared<pt::modules::AdditionModule<int, int, int>>(3);
+    auto mod_c = std::make_shared<pt::modules::AdditionModule<int, int, int> >(3);
     p.add(mod_c);
 
     pt::flow::Pipeline::connect(mod_a, mod_c);
 
-    auto sink = std::make_shared<pt::modules::PrintSink<int>>();
+    auto sink = std::make_shared<pt::modules::PrintSink<int> >();
     p.add(sink);
 
     pt::flow::Pipeline::connect(mod_b, sink);

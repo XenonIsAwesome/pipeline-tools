@@ -16,4 +16,4 @@ target_include_directories(libpt
 set(ENABLE_TESTS "Enable testing for libpt" ON)
 if (ENABLE_TESTS)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/test")
-endif()
+endif ()

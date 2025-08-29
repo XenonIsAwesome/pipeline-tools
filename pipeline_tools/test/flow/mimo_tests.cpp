@@ -13,8 +13,8 @@
 
 TEST(MiMoTests, SingleInputSingleProducer) {
     pt::flow::Pipeline p;
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(1));
-    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(1));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
+    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(1));
     auto sink = p.add(std::make_shared<MockSink>());
 
     p.execute();
@@ -24,9 +24,9 @@ TEST(MiMoTests, SingleInputSingleProducer) {
 TEST(MiMoTests, SingleInputManyProducers) {
     pt::flow::Pipeline p;
 
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(1));
-    auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int>>(4));
-    auto mod = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(10));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
+    auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(4));
+    auto mod = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(10));
     auto sink = p.add(std::make_shared<MockSink>());
     pt::flow::Pipeline::connect(src2, mod); // manually connect into same module chain
 
@@ -36,10 +36,10 @@ TEST(MiMoTests, SingleInputManyProducers) {
 }
 
 TEST(MiMoTests, ManyInputsSingleProducer) {
-    class MultiSource : public pt::flow::Source<std::vector<int>> {
+    class MultiSource : public pt::flow::Source<std::vector<int> > {
     public:
-        std::optional<std::vector<int>> process() override {
-            return std::vector{1,2,3};
+        std::optional<std::vector<int> > process() override {
+            return std::vector{1, 2, 3};
         }
     };
 
@@ -54,9 +54,9 @@ TEST(MiMoTests, ManyInputsSingleProducer) {
 
 TEST(MiMoTests, ManyInputsManyProducersAggregator) {
     pt::flow::Pipeline p;
-    auto src1 = p.add(std::make_shared<pt::modules::ConstantSource<int>>(1));
-    auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int>>(2));
-    auto agg = p.add(std::make_shared<pt::modules::SumAggregator<int, int>>(0));
+    auto src1 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
+    auto src2 = p.add(std::make_shared<pt::modules::ConstantSource<int> >(2));
+    auto agg = p.add(std::make_shared<pt::modules::SumAggregator<int, int> >(0));
     pt::flow::Pipeline::connect(src2, agg);
 
     auto sink = p.add(std::make_shared<MockSink>());
@@ -68,8 +68,8 @@ TEST(MiMoTests, ManyInputsManyProducersAggregator) {
 
 TEST(MiMoTests, SingleOutputManyConsumers) {
     pt::flow::Pipeline p;
-    auto src = p.add(std::make_shared<pt::modules::ConstantSource<int>>(5));
-    auto mod = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(1));
+    auto src = p.add(std::make_shared<pt::modules::ConstantSource<int> >(5));
+    auto mod = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(1));
 
     auto sink1 = p.add(std::make_shared<MockSink>());
     auto sink2 = std::make_shared<MockSink>();
@@ -88,15 +88,15 @@ TEST(MiMoTests, SingleOutputManyConsumers) {
 }
 
 TEST(MiMoTests, ManyOutputsSingleConsumer) {
-    class MultiOutModule : public pt::flow::Module<int,std::vector<int>> {
+    class MultiOutModule : public pt::flow::Module<int, std::vector<int> > {
     public:
-        std::optional<std::vector<int>> process(int input) override {
-            return std::vector{input, input+1, input+2};
+        std::optional<std::vector<int> > process(int input) override {
+            return std::vector{input, input + 1, input + 2};
         }
     };
 
     pt::flow::Pipeline p;
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(10));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(10));
     p.add(std::make_shared<MultiOutModule>());
     auto sink = p.add(std::make_shared<CollectSink>());
 
@@ -105,16 +105,18 @@ TEST(MiMoTests, ManyOutputsSingleConsumer) {
 }
 
 TEST(MiMoTests, ManyOutputsManyConsumers) {
-    class RoundRobinModule : public pt::flow::Module<int, std::vector<std::any>> {
+    class RoundRobinModule : public pt::flow::Module<int, std::vector<std::any> > {
     public:
-        RoundRobinModule(): Module(pt::flow::ProductionPolicy::RoundRobin) {}
-        std::optional<std::vector<std::any>> process(int input) override {
-            return std::vector<std::any>{input, input+1};
+        RoundRobinModule(): Module(pt::flow::ProductionPolicy::RoundRobin) {
+        }
+
+        std::optional<std::vector<std::any> > process(int input) override {
+            return std::vector<std::any>{input, input + 1};
         }
     };
 
     pt::flow::Pipeline p;
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(7));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(7));
     auto mod = p.add(std::make_shared<RoundRobinModule>());
     auto sink1 = p.add(std::make_shared<MockSink>());
     auto sink2 = std::make_shared<MockSink>();

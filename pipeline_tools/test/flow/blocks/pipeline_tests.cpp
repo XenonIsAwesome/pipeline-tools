@@ -7,8 +7,8 @@
 
 TEST(PipelineTests, AutoConnectSingleChain) {
     pt::flow::Pipeline p;
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(1));
-    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(2));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
+    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(2));
     auto sink = p.add(std::make_shared<MockSink>());
     p.execute();
 
@@ -17,9 +17,9 @@ TEST(PipelineTests, AutoConnectSingleChain) {
 
 TEST(PipelineTests, ManualConnectBranching) {
     pt::flow::Pipeline p;
-    auto src = p.add(std::make_shared<pt::modules::ConstantSource<int>>(10));
-    auto mod1 = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(1));
-    auto mod2 = std::make_shared<pt::modules::AdditionModule<int, int, int>>(5);
+    auto src = p.add(std::make_shared<pt::modules::ConstantSource<int> >(10));
+    auto mod1 = p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(1));
+    auto mod2 = std::make_shared<pt::modules::AdditionModule<int, int, int> >(5);
     auto sink1 = p.add(std::make_shared<MockSink>());
     auto sink2 = std::make_shared<MockSink>();
 

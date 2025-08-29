@@ -11,18 +11,18 @@ public:
     std::vector<int> collected;
 };
 
-class CollectSink : public pt::flow::Sink<std::vector<int>> {
+class CollectSink : public pt::flow::Sink<std::vector<int> > {
 public:
     void process(std::vector<int> input) override { collected = input; }
     std::vector<int> collected;
 };
 
-class NullSource: public pt::flow::Source<int> {
+class NullSource : public pt::flow::Source<int> {
 public:
     std::optional<int> process() override { return std::nullopt; }
 };
 
-class NullModule: public pt::flow::Module<int, int> {
+class NullModule : public pt::flow::Module<int, int> {
 public:
     std::optional<int> process(int) override { return std::nullopt; }
 };

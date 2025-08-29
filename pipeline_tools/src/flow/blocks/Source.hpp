@@ -9,7 +9,8 @@ namespace pt::flow {
     public:
         using output_type = Out;
 
-        explicit Source(const ProductionPolicy policy = ProductionPolicy::Fanout): Flow(policy) {}
+        explicit Source(const ProductionPolicy policy = ProductionPolicy::Fanout): Flow(policy) {
+        }
 
         virtual std::optional<Out> process() = 0;
 

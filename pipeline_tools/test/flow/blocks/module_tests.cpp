@@ -27,8 +27,8 @@ TEST(ModuleTests, ProcessAnyHandlesEmptyOptional) {
 TEST(ModuleTests, ModuleWorksInsidePipeline) {
     pt::flow::Pipeline p;
 
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(3));
-    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(4));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(3));
+    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(4));
     auto sink = p.add(std::make_shared<MockSink>());
 
     p.execute();
@@ -40,9 +40,9 @@ TEST(ModuleTests, ModuleWorksInsidePipeline) {
 TEST(ModuleTests, ModuleChainingMultiple) {
     pt::flow::Pipeline p;
 
-    p.add(std::make_shared<pt::modules::ConstantSource<int>>(1));
-    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(2));
-    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int>>(3));
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
+    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(2));
+    p.add(std::make_shared<pt::modules::AdditionModule<int, int, int> >(3));
     auto sink = p.add(std::make_shared<MockSink>());
 
     p.execute();

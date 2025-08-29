@@ -9,7 +9,8 @@ namespace pt::flow {
     public:
         using input_type = In;
 
-        explicit Sink() : Flow(ProductionPolicy::NoConsumer) {}
+        explicit Sink() : Flow(ProductionPolicy::NoConsumer) {
+        }
 
         virtual void process(In input) = 0;
 
@@ -17,7 +18,7 @@ namespace pt::flow {
             In cast_input;
             try {
                 cast_input = std::any_cast<In>(in);
-            } catch (const std::bad_any_cast& e) {
+            } catch (const std::bad_any_cast &e) {
                 /// TODO: throw custom error
                 std::stringstream ss;
                 ss << __FILE__ << ":" << __LINE__ << ":" << std::endl;
