@@ -20,7 +20,7 @@ namespace pt::flow {
                 add_node = sources.empty();
                 connect_to_last_node = false;
                 sources.push_back(f);
-            } else if constexpr (std::derived_from<F, Sink<FIn>>) {
+            } else if constexpr (std::derived_from<F, Sink<FIn> >) {
                 add_node = false;
             }
 
@@ -53,7 +53,7 @@ namespace pt::flow {
 
     private:
         bool sink_inserted{false};
-        std::vector<std::shared_ptr<Flow>> sources{};
-        std::vector<std::shared_ptr<Flow>> nodes{};
+        std::vector<std::shared_ptr<Flow> > sources{};
+        std::vector<std::shared_ptr<Flow> > nodes{};
     };
 } // namespace pt::flow

@@ -36,20 +36,25 @@ public:
     Tracer(int v = 0): value(v) {
         events.push_back("ctor");
     }
+
     Tracer(const Tracer &o): value(o.value) {
         events.push_back("copy");
     }
+
     Tracer(Tracer &&o) noexcept: value(o.value) {
         events.push_back("move");
     }
+
     ~Tracer() {
         events.push_back("dtor");
     }
+
     Tracer &operator=(const Tracer &o) {
         value = o.value;
         events.push_back("copy=");
         return *this;
     }
+
     Tracer &operator=(Tracer &&o) noexcept {
         value = o.value;
         events.push_back("move=");
