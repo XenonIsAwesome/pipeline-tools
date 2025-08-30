@@ -1,13 +1,13 @@
 #pragma once
 
 #include <queue>
-#include <util/queues/IQueue.hpp>
+#include <utils/queues/Queue.hpp>
 
-namespace pt::queues {
+namespace pt::utils::queues {
     template<typename T>
-    class Queue final: public IQueue<T> {
+    class StdQueue final: public Queue<T> {
     public:
-        explicit Queue(): queue_() {}
+        explicit StdQueue(): queue_() {}
 
         T& peek() override {
             return queue_.front();

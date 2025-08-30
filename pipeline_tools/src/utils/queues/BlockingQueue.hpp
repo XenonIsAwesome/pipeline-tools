@@ -1,11 +1,11 @@
 #pragma once
 
-#include <util/queues/IQueue.hpp>
-#include <util/queues/moodycamel/readerwriterqueue.h>
+#include <utils/queues/Queue.hpp>
+#include <utils/queues/moodycamel/readerwriterqueue.h>
 
-namespace pt::queues {
+namespace pt::utils::queues {
     template<typename T>
-    class LockFreeQueue final: public IQueue<T> {
+    class LockFreeQueue final: public Queue<T> {
         using MoodyQueue = moodycamel::BlockingReaderWriterQueue<T>;
 
     public:
