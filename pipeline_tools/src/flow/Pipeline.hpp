@@ -38,11 +38,9 @@ namespace pt::flow {
         template<
             typename F,
             typename FIn = typename F::input_type,
-            typename FOut = typename F::output_type
-        >
+            typename FOut = typename F::output_type>
         std::shared_ptr<F> add(std::shared_ptr<F> f)
-        requires std::derived_from<F, Flow>
-        {
+            requires std::derived_from<F, Flow> {
             if constexpr (std::derived_from<F, Source<FOut> >) {
                 sources.push_back(f);
                 if (!nodes.empty()) {
@@ -108,26 +106,25 @@ namespace pt::flow {
         std::tuple<std::shared_ptr<Nodes>...> nodes,
         std::tuple<std::shared_ptr<Snks>...> sinks
     )
-    requires (... && std::derived_from<Srcs, Source<typename Srcs::output_type>>) &&
-        ((... && std::derived_from<Nodes, Module<typename Nodes::input_type, typename Nodes::output_type>>) ||
-        (... && std::derived_from<Nodes, Aggregator<typename Nodes::input_type, typename Nodes::output_type>>)) &&
-        (... && std::derived_from<Snks, Sink<typename Snks::input_type>>)
-    {
+        requires (... && std::derived_from<Srcs, Source<typename Srcs::output_type> >) &&
+                 ((... && std::derived_from<Nodes, Module<typename Nodes::input_type, typename Nodes::output_type> >) ||
+                  (... && std::derived_from<Nodes, Aggregator<typename Nodes::input_type, typename Nodes::output_type> >
+                  )) &&
+                 (... && std::derived_from<Snks, Sink<typename Snks::input_type> >) {
         Pipeline p;
 
-        std::apply([&p](auto&&... src){
+        std::apply([&p](auto &&... src) {
             ((p.add(src)), ...);
         }, sources);
 
-        std::apply([&p](auto&&... node){
+        std::apply([&p](auto &&... node) {
             ((p.add(node)), ...);
         }, nodes);
 
-        std::apply([&p](auto&&... snk){
+        std::apply([&p](auto &&... snk) {
             ((p.add(snk)), ...);
         }, sinks);
 
         return p;
     }
-
 } // namespace pt::flow
