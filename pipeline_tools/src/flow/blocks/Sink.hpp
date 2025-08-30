@@ -14,7 +14,8 @@ namespace pt::flow {
         /**
          * Overriding with nothing because sink cannot be a producer.
          */
-        void produce(std::any output) override {}
+        void produce(std::any output) override {
+        }
 
         std::any process_any(std::any in, size_t producer_id) override {
             process(std::move(utils::any_cast_with_info<In>(std::move(in))));

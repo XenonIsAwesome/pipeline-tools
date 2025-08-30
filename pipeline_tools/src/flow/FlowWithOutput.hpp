@@ -29,7 +29,7 @@ namespace pt::flow {
 
     protected:
         void round_robin(std::any output) override {
-            auto outputs = utils::any_cast_with_info<std::vector<T>>(std::move(output));
+            auto outputs = utils::any_cast_with_info<std::vector<T> >(std::move(output));
             size_t max_size = std::min(outputs.size(), next_nodes.size());
 
             for (size_t i = 0; i < max_size; i++) {
