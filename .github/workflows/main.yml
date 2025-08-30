@@ -1,0 +1,39 @@
+name: CMake Build and Test
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ '*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build All Targets
+        run: |
+          cmake --build build --target pt-example
+          cmake --build build --target libpt-gtest
+          cmake --build build --target libpt-benchmark
+
+      - name: Run GTest
+        run: ./build/pipeline_tools/test/libpt-gtest
+
+      - name: Run Benchmarks and Save Output
+        run: |
+          mkdir -p ./out
+          ./build/pipeline_tools/test/libpt-benchmark | tee ./out/benchmark.log
+
+      - name: Upload Benchmark Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: out/benchmark.log

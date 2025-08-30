@@ -1,49 +1,25 @@
 #pragma once
 
-#include <any>
-#include <memory>
-#include <flow/Block.hpp>
+#include <flow/Flow.hpp>
+#include <utils/exceptions/bad_any_cast_with_info.hpp>
 
-namespace pt::flow::blocks {
-    // TODO(xenon): add docs
-    template<typename Input>
-    class Sink : public Block {
+namespace pt::flow {
+    template<typename In>
+    class Sink : public Flow {
     public:
-        using input_type = Input;
+        using input_type = In;
 
-        ~Sink() override = default;
+        virtual void process(In input) = 0;
 
-        // TODO(xenon): add docs
-        explicit Sink(std::string name): Block(std::move(name)) {}
-
-        // TODO(xenon): add docs
-        virtual void process(const Input &) = 0;
-    };
-
-    class ISinkAny {
-    public:
-        virtual ~ISinkAny() = default;
-
-        virtual std::string get_name() = 0;
-        virtual void process_any(std::any in) = 0;
-    };
-
-    template<typename Input>
-    class SinkHolder final : public ISinkAny {
-    public:
-        explicit SinkHolder(std::shared_ptr<Sink<Input>> m):
-            sink(std::move(m)) {}
-
-        void process_any(std::any in) override {
-            sink->process(std::any_cast<Input>(in));
+        /**
+         * Overriding with nothing because sink cannot be a producer.
+         */
+        void produce(std::any output) override {
         }
 
-        std::string get_name() override {
-            return sink->get_name();
+        std::any process_any(std::any in, size_t producer_id) override {
+            process(std::move(utils::any_cast_with_info<In>(std::move(in))));
+            return {};
         }
-
-    private:
-        std::shared_ptr<Sink<Input>> sink;
-
     };
-} // namespace pt::flow::blocks
+}
