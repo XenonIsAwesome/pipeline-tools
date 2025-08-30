@@ -1,31 +1,29 @@
-#include <flow/blocks/Pipeline.hpp>
-#include <modules/AddModule.h>
-
-#include "modules/NumberSource.h"
-#include "modules/PrintSink.hpp"
-#include "modules/QueueSink.hpp"
-#include "modules/QueueSource.hpp"
-#include "util/queues/LockFreeQueue.hpp"
+#include <memory>
+#include <flow/Pipeline.hpp>
+#include <modules/io/ConstantSource.hpp>
+#include <modules/io/PrintSink.hpp>
+#include <modules/math/AdditionModule.hpp>
 
 int main() {
+    pt::flow::Pipeline p;
 
-    auto queue = std::make_shared<pt::queues::LockFreeQueue<int>>();
+    p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
 
-    pt::flow::blocks::Pipeline p1("p1");
-    p1.set_source(std::make_shared<pt::modules::NumberSource>(1));
-    p1.add_module(std::make_shared<pt::modules::AddModule>(1));
-    p1.add_module(std::make_shared<pt::modules::AddModule>(2));
-    p1.add_module(std::make_shared<pt::modules::AddModule>(3));
-    p1.set_sink(std::make_shared<pt::modules::QueueSink<int>>("p1->p2 SINK", queue));
+    auto mod_a = std::make_shared<pt::modules::AdditionModule<int, int, int> >(1);
+    p.add(mod_a);
 
-    pt::flow::blocks::Pipeline p2("p2");
-    p2.set_source(std::make_shared<pt::modules::QueueSource<int>>("p1->p2 SOURCE", queue));
-    p2.add_module(std::make_shared<pt::modules::AddModule>(1));
-    p2.add_module(std::make_shared<pt::modules::AddModule>(2));
-    p2.add_module(std::make_shared<pt::modules::AddModule>(3));
-    p2.set_sink(std::make_shared<pt::modules::PrintSink<int>>());
+    auto mod_b = std::make_shared<pt::modules::AdditionModule<int, int, int> >(2);
+    p.add(mod_b);
 
-    p1.execute();
-    p2.execute();
-    p2.execute();
+    auto mod_c = std::make_shared<pt::modules::AdditionModule<int, int, int> >(3);
+    p.add(mod_c);
+
+    pt::flow::connect(mod_a, mod_c);
+
+    auto sink = std::make_shared<pt::modules::PrintSink<int> >();
+    p.add(sink);
+
+    pt::flow::connect(mod_b, sink);
+
+    p.execute();
 }
