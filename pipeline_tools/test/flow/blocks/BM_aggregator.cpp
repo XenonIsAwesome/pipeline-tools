@@ -3,10 +3,10 @@
 #include "../flow_test_utils.hpp"
 #include <modules/math/SumAggregator.hpp>
 
-static void BM_Aggregator(benchmark::State &state) {
+static void BM_SumAggregator_ProcessAny(benchmark::State &state) {
     pt::modules::SumAggregator<int, int> agg{0};
     for (auto _: state) {
         agg.process_any(5, 0);
     }
 }
-BENCHMARK(BM_Aggregator);
+BENCHMARK(BM_SumAggregator_ProcessAny);
