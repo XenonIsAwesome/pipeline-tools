@@ -5,9 +5,10 @@
 
 namespace pt::utils::queues {
     template<typename T>
-    class StdQueue final: public Queue<T> {
+    class StdQueue final : public Queue<T> {
     public:
-        explicit StdQueue(): queue_() {}
+        explicit StdQueue(): queue_() {
+        }
 
         T& peek() override {
             return queue_.front();

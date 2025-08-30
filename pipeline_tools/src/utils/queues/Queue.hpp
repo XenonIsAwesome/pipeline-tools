@@ -6,14 +6,14 @@
 
 namespace pt::utils::queues {
     template<typename T>
-    class Queue: public IQueue {
+    class Queue : public IQueue {
     public:
-        std::any& peek_any() override {
-            T& result = peek();
+        std::any &peek_any() override {
+            T &result = peek();
             return result;
         }
 
-        bool pop_any(std::any& item) override {
+        bool pop_any(std::any &item) override {
             return pop(item);
         }
 
