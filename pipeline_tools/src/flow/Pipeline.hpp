@@ -7,6 +7,7 @@
 #include <flow/blocks/Sink.hpp>
 #include <flow/blocks/Aggregator.hpp>
 #include <flow/blocks/Module.hpp>
+#include <utils/exceptions/unknown_flow_object_type.h>
 
 namespace pt::flow {
     class Pipeline {
@@ -46,10 +47,10 @@ namespace pt::flow {
             } else if constexpr (std::derived_from<F, Module<FIn, FOut> > || std::derived_from<F, Aggregator<FIn,
                                      FOut> > || std::derived_from<F, Sink<FIn> >) {
                 if (!nodes.empty()) {
-                    nodes.back()->connect(f);
+                    nodes.back()->add_next(f);
                 } else if (!sources.empty()) {
                     for (auto &src: sources) {
-                        src->connect(f);
+                        src->add_next(f);
                     }
                 }
 
@@ -58,10 +59,7 @@ namespace pt::flow {
                     nodes.push_back(f);
                 }
             } else {
-                // TODO: raise custom error
-                std::stringstream ss;
-                ss << "Unknown flow object type: " << typeid(f).name();
-                throw std::runtime_error(ss.str());
+                throw utils::exceptions::unknown_flow_object_type(typeid(f));
             }
             return f;
         }

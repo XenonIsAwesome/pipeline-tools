@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include <optional>
-#include <sstream>
 #include <unordered_map>
 #include <vector>
 #include <flow/FlowWithOutput.hpp>
@@ -22,17 +21,7 @@ namespace pt::flow {
                 return {};
             }
 
-            In cast_input;
-            try {
-                cast_input = std::any_cast<In>(in);
-            } catch (const std::bad_any_cast &e) {
-                // TODO: throw custom error
-                std::stringstream ss;
-                ss << __FILE__ << ":" << __LINE__ << ":" << e.what();
-                throw std::runtime_error(ss.str());
-            }
-
-            latest[producer_id] = cast_input;
+            latest[producer_id] = std::move(utils::any_cast_with_info<In>(std::move(in)));
             state |= idx;
 
             auto final_state = static_cast<size_t>(std::pow(2, producer_count)) - 1;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <sstream>
 #include <flow/Flow.hpp>
+#include <utils/exceptions/bad_any_cast_with_info.hpp>
 
 namespace pt::flow {
     template<typename In>
@@ -9,24 +9,15 @@ namespace pt::flow {
     public:
         using input_type = In;
 
-        explicit Sink() : Flow(ProductionPolicy::NoConsumer) {
-        }
-
         virtual void process(In input) = 0;
 
+        /**
+         * Overriding with nothing because sink cannot be a producer.
+         */
+        void produce(std::any output) override {}
+
         std::any process_any(std::any in, size_t producer_id) override {
-            In cast_input;
-            try {
-                cast_input = std::any_cast<In>(std::move(in));
-            } catch (const std::bad_any_cast &e) {
-                /// TODO: throw custom error
-                std::stringstream ss;
-                ss << __FILE__ << ":" << __LINE__ << ":" << std::endl;
-                ss << in.type().name() << ":" << typeid(In).name() << std::endl;
-                ss << e.what();
-                throw std::runtime_error(ss.str());
-            }
-            process(std::move(cast_input));
+            process(std::move(utils::any_cast_with_info<In>(std::move(in))));
             return {};
         }
     };
