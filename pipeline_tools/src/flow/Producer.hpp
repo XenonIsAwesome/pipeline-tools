@@ -14,7 +14,7 @@ namespace pt::flow {
      *
      * @note For RoundRobin policy, modules must instead produce a vector of values.
      *       That case is handled by the partial specialization
-     *       `FlowWithOutput<std::vector<T>>`.
+     *       `Producer<std::vector<T>>`.
      *
      * @tparam Out The type produced by the module.
      */
@@ -59,6 +59,12 @@ namespace pt::flow {
         }
 
     protected:
+        /**
+         * Give each output to each consumer<br/>
+         * `consumers[i]->consume(outputs[i])`
+         *
+         * @param output The non-typed output
+         */
         void round_robin(std::any output) override {
             auto outputs = utils::any_cast_with_info<std::vector<T> >(std::move(output));
             size_t max_size = std::min(outputs.size(), next_nodes.size());
