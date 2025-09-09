@@ -1,13 +1,18 @@
 #pragma once
-#include "concepts.h"
-#include "Pipeline.hpp"
-#include "utils/queues/IQueue.hpp"
-#include "utils/queues/QueueType.h"
+#include "modules/io/queue/QueueSink.hpp"
+#include "modules/io/queue/QueueSource.hpp"
+
+
+#include <flow/concepts.h>
+#include <flow/Pipeline.hpp>
+#include <utils/queues/IQueue.hpp>
+#include <utils/queues/QueueFactory.hpp>
 
 namespace pt::flow {
     class Mission {
     public:
-        Mission() = default;
+        explicit Mission(queues::QueueType queue_type): queue_type(queue_type) {}
+        virtual ~Mission() = default;
 
         /**
          * Starts all pipelines in the opposite order they were created in.
@@ -33,17 +38,15 @@ namespace pt::flow {
         requires (... && concepts::SourceLike<Srcs>) && \
                 (... && concepts::NodeLike<Nods>) && \
                 (... && concepts::SinkLike<Snks>)
-        void add(std::optional<std::tuple<std::shared_ptr<Srcs>...>> sources,
+        void add(std::tuple<std::shared_ptr<Srcs>...> sources,
             std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes,
-            std::optional<std::tuple<std::shared_ptr<Snks>...>> sinks)
+            std::tuple<std::shared_ptr<Snks>...> sinks)
         {
             Pipeline p;
 
-            if (sources.has_value()) {
-                std::apply([&p](auto &&... src) {
-                    ((p.add(src)), ...);
-                }, sources.value());
-            }
+            std::apply([&p](auto &&... src) {
+                ((p.add(src)), ...);
+            }, sources.value());
 
             if (nodes.has_value()) {
                 std::apply([&p](auto &&... node) {
@@ -51,26 +54,24 @@ namespace pt::flow {
                 }, nodes.value());
             }
 
-            if (sinks.has_value()) {
-                std::apply([&p](auto &&... sink) {
-                    ((p.add(sink)), ...);
-                }, sinks.value());
-            }
+            std::apply([&p](auto &&... sink) {
+                ((p.add(sink)), ...);
+            }, sinks.value());
         }
 
         template<typename ...Nods, typename ...Snks>
         requires (... && concepts::NodeLike<Nods>) && \
                 (... && concepts::SinkLike<Snks>)
         void add(std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes,
-            std::optional<std::tuple<std::shared_ptr<Snks>...>> sinks)
+            std::tuple<std::shared_ptr<Snks>...> sinks)
         {
-            // TODO: instead of nullopt, make a QueueSource.
-            // TODO: for the queue you're supposed to give the QueueSource, do the following:
-            // TODO: store all the queues in a vector as a private variable.
-            // TODO: track the creation of queues, if a queue was created before this, use the same one to link pipelines to each-other.
-            // TODO: if the last queue in the vector was already used to bridge 2 pipelines, then make a new one.
-            // TODO: make the fitting pt::queue object based on a given pt::queue::QueueType
-            add(std::nullopt, nodes, sinks);
+            using first_node = std::tuple_element_t<0, std::tuple<Nods...>>;
+            using queue_output_type = typename first_node::input_type;
+
+            auto q = get_or_create_queue<queue_output_type>();
+            auto src = std::make_shared<modules::QueueSource<queue_output_type>>(q);
+
+            add(std::make_tuple(src), nodes, sinks);
         }
 
         template<typename ...Srcs, typename ...Nods>
@@ -79,29 +80,41 @@ namespace pt::flow {
         void add(std::optional<std::tuple<std::shared_ptr<Srcs>...>> sources,
             std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes)
         {
-            // TODO: instead of nullopt, make a QueueSink.
-            // TODO: for the queue you're supposed to give the QueueSink, do the following:
-            // TODO: store all the queues in a vector as a private variable.
-            // TODO: track the creation of queues, if a queue was created before this, use the same one to link pipelines to each-other.
-            // TODO: if the last queue in the vector was already used to bridge 2 pipelines, then make a new one.
-            // TODO: make the fitting pt::queue object based on a given pt::queue::QueueType
-            add(sources, nodes, std::nullopt);
+            using last_node = typename std::tuple_element_t<sizeof...(Nods) - 1,
+                                std::tuple<std::shared_ptr<Nods>...>>::element_type;
+            using queue_input_type = typename last_node::output_type;
+
+            auto q = get_or_create_queue<queue_input_type>();
+            auto sink = std::make_shared<modules::QueueSink<queue_input_type>>(q);
+
+            add(sources, nodes, std::make_tuple(sink));
         }
 
         template<typename ...Nods>
         requires (... && concepts::NodeLike<Nods>)
         void add(std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes)
         {
-            // TODO: instead of nullopt, make a QueueSource and a QueueSink.
-            // TODO: for the queues you're supposed to give the Queue based flow objects, do the following:
-            // TODO: store all the queues in a vector as a private variable.
-            // TODO: track the creation of queues, if a queue was created before this, use the same one to link pipelines to each-other.
-            // TODO: if the last queue in the vector was already used to bridge 2 pipelines, then make a new one.
-            // TODO: make the fitting pt::queue object based on a given pt::queue::QueueType
-            add(std::nullopt, nodes, std::nullopt);
+            // Input Queue
+            using first_node = std::tuple_element_t<0, std::tuple<Nods...>>;
+            using queue_output_type = typename first_node::input_type;
+
+            auto input_q = get_or_create_queue<queue_output_type>();
+            auto src = std::make_shared<modules::QueueSource<queue_output_type>>(input_q);
+
+            // Output Queue
+            using last_node = typename std::tuple_element_t<sizeof...(Nods) - 1,
+                    std::tuple<std::shared_ptr<Nods>...>>::element_type;
+            using queue_input_type = typename last_node::output_type;
+
+            auto output_q = get_or_create_queue<queue_input_type>();
+            auto sink = std::make_shared<modules::QueueSink<queue_input_type>>(output_q);
+
+            add(std::make_tuple(src), nodes, std::make_tuple(sink));
         }
 
     private:
+        queues::QueueType queue_type;
+
         struct QueueWrapper {
             std::any queue;
             bool used{false};
@@ -109,19 +122,16 @@ namespace pt::flow {
         std::vector<QueueWrapper> queues;
 
         template<typename T>
-        std::shared_ptr<utils::queues::IQueue<T>> get_or_create_queue() {
+        std::shared_ptr<queues::IQueue<T>> get_or_create_queue() {
             if (!queues.empty() && !queues.back().used) {
                 queues.back().used = true;
-                return std::any_cast<std::shared_ptr<utils::queues::IQueue<T>>&>(queues.back().queue);
+                return std::any_cast<std::shared_ptr<queues::IQueue<T>>&>(queues.back().queue);
             }
-            auto q = utils::queues::make_queue<T>(queue_type);
+            auto q = queues::make_queue<T>(queue_type);
             queues.push_back({q, true});
             return q;
         }
 
         std::vector<Pipeline> pipelines;
-
-        // TODO: currently not possible to do because we do not know the type of the queue
-        // std::vector<pt::queues::IQueue<T>>
     };
 }
