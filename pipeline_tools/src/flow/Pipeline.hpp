@@ -1,5 +1,8 @@
 #pragma once
 
+#include "concepts.h"
+
+
 #include <memory>
 #include <vector>
 #include <flow/Flow.hpp>
@@ -106,12 +109,15 @@ namespace pt::flow {
         std::tuple<std::shared_ptr<Nodes>...> nodes,
         std::tuple<std::shared_ptr<Snks>...> sinks
     )
-        requires (... && std::derived_from<Srcs, Source<typename Srcs::output_type> >) &&
-                 ((... && std::derived_from<Nodes, Module<typename Nodes::input_type, typename Nodes::output_type> >) ||
-                  (... && std::derived_from<Nodes, Aggregator<typename Nodes::input_type, typename Nodes::output_type> >
-                  )) &&
-                 (... && std::derived_from<Snks, Sink<typename Snks::input_type> >) {
+        requires (... && concepts::SourceLike<Srcs>) &&
+                 (... && concepts::NodeLike<Nodes>) &&
+                 (... && concepts::SinkLike<Snks>) {
         Pipeline p;
+
+        if constexpr (sizeof...(Nodes) == 0) {
+            // TODO: allow for empty pipelines (maybe)
+            throw std::runtime_error("Pipeline is empty");
+        }
 
         std::apply([&p](auto &&... src) {
             ((p.add(src)), ...);

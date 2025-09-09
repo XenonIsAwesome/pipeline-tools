@@ -1,8 +1,8 @@
 #pragma once
-#include "modules/io/queue/QueueSink.hpp"
-#include "modules/io/queue/QueueSource.hpp"
 
-
+#include <thread>
+#include <modules/io/queue/QueueSink.hpp>
+#include <modules/io/queue/QueueSource.hpp>
 #include <flow/concepts.h>
 #include <flow/Pipeline.hpp>
 #include <utils/queues/IQueue.hpp>
@@ -35,8 +35,8 @@ namespace pt::flow {
         virtual void build() = 0;
 
         template<typename ...Srcs, typename ...Nods, typename ...Snks>
-        requires (... && concepts::SourceLike<Srcs>) && \
-                (... && concepts::NodeLike<Nods>) && \
+        requires (... && concepts::SourceLike<Srcs>) &&
+                (... && concepts::NodeLike<Nods>) &&
                 (... && concepts::SinkLike<Snks>)
         void add(std::tuple<std::shared_ptr<Srcs>...> sources,
             std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes,
@@ -57,59 +57,76 @@ namespace pt::flow {
             std::apply([&p](auto &&... sink) {
                 ((p.add(sink)), ...);
             }, sinks.value());
+
+            pipelines.emplace_back(p);
         }
 
         template<typename ...Nods, typename ...Snks>
-        requires (... && concepts::NodeLike<Nods>) && \
+        requires (... && concepts::NodeLike<Nods>) &&
                 (... && concepts::SinkLike<Snks>)
         void add(std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes,
             std::tuple<std::shared_ptr<Snks>...> sinks)
         {
-            using first_node = std::tuple_element_t<0, std::tuple<Nods...>>;
-            using queue_output_type = typename first_node::input_type;
+            if constexpr (sizeof...(Nods) > 0) {
+                using first_node = std::tuple_element_t<0, std::tuple<Nods...>>;
+                using queue_output_type = typename first_node::input_type;
 
-            auto q = get_or_create_queue<queue_output_type>();
-            auto src = std::make_shared<modules::QueueSource<queue_output_type>>(q);
+                auto q = get_or_create_queue<queue_output_type>();
+                auto src = std::make_shared<modules::QueueSource<queue_output_type>>(q);
 
-            add(std::make_tuple(src), nodes, sinks);
+                add(std::make_tuple(src), nodes, sinks);
+            } else {
+                // TODO: allow for empty pipelines (maybe)
+                throw std::runtime_error("Pipeline is empty");
+            }
         }
 
         template<typename ...Srcs, typename ...Nods>
-        requires (... && concepts::SourceLike<Srcs>) && \
+        requires (... && concepts::SourceLike<Srcs>) &&
                 (... && concepts::NodeLike<Nods>)
         void add(std::optional<std::tuple<std::shared_ptr<Srcs>...>> sources,
             std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes)
         {
-            using last_node = typename std::tuple_element_t<sizeof...(Nods) - 1,
-                                std::tuple<std::shared_ptr<Nods>...>>::element_type;
-            using queue_input_type = typename last_node::output_type;
+            if constexpr (sizeof...(Nods) > 0) {
+                using last_node = typename std::tuple_element_t<sizeof...(Nods) - 1,
+                                    std::tuple<std::shared_ptr<Nods>...>>::element_type;
+                using queue_input_type = typename last_node::output_type;
 
-            auto q = get_or_create_queue<queue_input_type>();
-            auto sink = std::make_shared<modules::QueueSink<queue_input_type>>(q);
+                auto q = get_or_create_queue<queue_input_type>();
+                auto sink = std::make_shared<modules::QueueSink<queue_input_type>>(q);
 
-            add(sources, nodes, std::make_tuple(sink));
+                add(sources, nodes, std::make_tuple(sink));
+            } else {
+                // TODO: allow for empty pipelines (maybe)
+                throw std::runtime_error("Pipeline is empty");
+            }
         }
 
         template<typename ...Nods>
         requires (... && concepts::NodeLike<Nods>)
         void add(std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes)
         {
-            // Input Queue
-            using first_node = std::tuple_element_t<0, std::tuple<Nods...>>;
-            using queue_output_type = typename first_node::input_type;
+            if constexpr (sizeof...(Nods) > 0) {
+                // Input Queue
+                using first_node = std::tuple_element_t<0, std::tuple<Nods...>>;
+                using queue_output_type = typename first_node::input_type;
 
-            auto input_q = get_or_create_queue<queue_output_type>();
-            auto src = std::make_shared<modules::QueueSource<queue_output_type>>(input_q);
+                auto input_q = get_or_create_queue<queue_output_type>();
+                auto src = std::make_shared<modules::QueueSource<queue_output_type>>(input_q);
 
-            // Output Queue
-            using last_node = typename std::tuple_element_t<sizeof...(Nods) - 1,
-                    std::tuple<std::shared_ptr<Nods>...>>::element_type;
-            using queue_input_type = typename last_node::output_type;
+                // Output Queue
+                using last_node = typename std::tuple_element_t<sizeof...(Nods) - 1,
+                        std::tuple<std::shared_ptr<Nods>...>>::element_type;
+                using queue_input_type = typename last_node::output_type;
 
-            auto output_q = get_or_create_queue<queue_input_type>();
-            auto sink = std::make_shared<modules::QueueSink<queue_input_type>>(output_q);
+                auto output_q = get_or_create_queue<queue_input_type>();
+                auto sink = std::make_shared<modules::QueueSink<queue_input_type>>(output_q);
 
-            add(std::make_tuple(src), nodes, std::make_tuple(sink));
+                add(std::make_tuple(src), nodes, std::make_tuple(sink));
+            } else {
+                // TODO: allow for empty pipelines (maybe)
+                throw std::runtime_error("Pipeline is empty");
+            }
         }
 
     private:
@@ -132,6 +149,10 @@ namespace pt::flow {
             return q;
         }
 
-        std::vector<Pipeline> pipelines;
+        std::vector<Pipeline> pipelines; /**< The pipelines held in the mission */
+
+        /** control flag (false = running, true = stop requested) */
+        std::atomic_flag stop_flag = ATOMIC_FLAG_INIT;
+        std::vector<std::thread> workers; /**< threads running each pipeline */
     };
 }
