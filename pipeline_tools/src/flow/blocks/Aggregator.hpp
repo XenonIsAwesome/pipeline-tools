@@ -4,15 +4,15 @@
 #include <optional>
 #include <unordered_map>
 #include <vector>
-#include <flow/FlowWithOutput.hpp>
+#include <flow/Producer.hpp>
 
 namespace pt::flow {
     template<typename In, typename Out>
-    class Aggregator : public FlowWithOutput<Out> {
+    class Aggregator : public Producer<Out> {
     public:
         using input_type = In;
 
-        Aggregator(): FlowWithOutput<Out>(ProductionPolicy::Fanout) {
+        Aggregator(): Producer<Out>(ProductionPolicy::Fanout) {
         }
 
         std::any process_any(std::any in, size_t producer_id) override {
