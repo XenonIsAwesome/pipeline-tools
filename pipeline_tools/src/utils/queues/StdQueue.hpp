@@ -1,11 +1,11 @@
 #pragma once
 
 #include <queue>
-#include <utils/queues/Queue.hpp>
+#include <utils/queues/IQueue.hpp>
 
 namespace pt::utils::queues {
     template<typename T>
-    class StdQueue final : public Queue<T> {
+    class StdQueue final : public IQueue<T> {
     public:
         explicit StdQueue(): queue_() {
         }
