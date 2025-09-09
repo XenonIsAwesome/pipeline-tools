@@ -13,7 +13,7 @@ namespace pt::modules {
     template<concepts::ImplicitlyDefaultConstructible T>
     class QueueSource : public flow::Source<T> {
     public:
-        explicit QueueSource(std::shared_ptr<utils::queues::IQueue<T>> queue): queue_(std::move(queue)) {
+        explicit QueueSource(std::shared_ptr<queues::IQueue<T>> queue): queue_(std::move(queue)) {
         }
 
         std::optional<T> process() override {
@@ -25,6 +25,6 @@ namespace pt::modules {
         }
 
     private:
-        std::shared_ptr<utils::queues::IQueue<T>> queue_;
+        std::shared_ptr<queues::IQueue<T>> queue_;
     };
 } // namespace pt::modules

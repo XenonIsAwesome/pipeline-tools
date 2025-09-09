@@ -7,7 +7,7 @@ namespace pt::modules {
     template<typename T>
     class QueueSink final : public flow::Sink<T> {
     public:
-        explicit QueueSink(std::shared_ptr<utils::queues::IQueue<T>> queue): queue_(queue) {
+        explicit QueueSink(std::shared_ptr<queues::IQueue<T>> queue): queue_(queue) {
         }
 
         void process(const T &item) override {
@@ -15,6 +15,6 @@ namespace pt::modules {
         }
 
     private:
-        std::shared_ptr<utils::queues::IQueue<T>> queue_;
+        std::shared_ptr<queues::IQueue<T>> queue_;
     };
 } // namespace pt::modules
