@@ -3,7 +3,7 @@
 #include <queue>
 #include <utils/queues/IQueue.hpp>
 
-namespace pt::utils::queues {
+namespace pt::queues {
     template<typename T>
     class StdQueue final : public IQueue<T> {
     public:

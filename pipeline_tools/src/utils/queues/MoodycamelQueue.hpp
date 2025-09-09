@@ -3,7 +3,7 @@
 #include <utils/queues/IQueue.hpp>
 #include <utils/queues/moodycamel/readerwriterqueue.h>
 
-namespace pt::utils::queues {
+namespace pt::queues {
     namespace concepts {
         template<typename Q, typename T>
         concept MoodyQueue = requires(Q q, T t)

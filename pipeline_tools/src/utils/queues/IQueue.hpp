@@ -2,7 +2,7 @@
 
 #include <any>
 
-namespace pt::utils::queues {
+namespace pt::queues {
     template<typename T>
     class IQueue {
     public:
