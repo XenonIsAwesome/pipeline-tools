@@ -39,7 +39,7 @@ namespace pt::flow {
                 (... && concepts::NodeLike<Nods>) &&
                 (... && concepts::SinkLike<Snks>)
         void add(std::tuple<std::shared_ptr<Srcs>...> sources,
-            std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes,
+            std::tuple<std::shared_ptr<Nods>...> nodes,
             std::tuple<std::shared_ptr<Snks>...> sinks)
         {
             Pipeline p;
@@ -48,11 +48,9 @@ namespace pt::flow {
                 ((p.add(src)), ...);
             }, sources.value());
 
-            if (nodes.has_value()) {
-                std::apply([&p](auto &&... node) {
-                    ((p.add(node)), ...);
-                }, nodes.value());
-            }
+            std::apply([&p](auto &&... node) {
+                ((p.add(node)), ...);
+            }, nodes.value());
 
             std::apply([&p](auto &&... sink) {
                 ((p.add(sink)), ...);
@@ -64,7 +62,7 @@ namespace pt::flow {
         template<typename ...Nods, typename ...Snks>
         requires (... && concepts::NodeLike<Nods>) &&
                 (... && concepts::SinkLike<Snks>)
-        void add(std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes,
+        void add(std::tuple<std::shared_ptr<Nods>...> nodes,
             std::tuple<std::shared_ptr<Snks>...> sinks)
         {
             if constexpr (sizeof...(Nods) > 0) {
@@ -84,8 +82,8 @@ namespace pt::flow {
         template<typename ...Srcs, typename ...Nods>
         requires (... && concepts::SourceLike<Srcs>) &&
                 (... && concepts::NodeLike<Nods>)
-        void add(std::optional<std::tuple<std::shared_ptr<Srcs>...>> sources,
-            std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes)
+        void add(std::tuple<std::shared_ptr<Srcs>...> sources,
+            std::tuple<std::shared_ptr<Nods>...> nodes)
         {
             if constexpr (sizeof...(Nods) > 0) {
                 using last_node = typename std::tuple_element_t<sizeof...(Nods) - 1,
@@ -104,7 +102,7 @@ namespace pt::flow {
 
         template<typename ...Nods>
         requires (... && concepts::NodeLike<Nods>)
-        void add(std::optional<std::tuple<std::shared_ptr<Nods>...>> nodes)
+        void add(std::tuple<std::shared_ptr<Nods>...> nodes)
         {
             if constexpr (sizeof...(Nods) > 0) {
                 // Input Queue
