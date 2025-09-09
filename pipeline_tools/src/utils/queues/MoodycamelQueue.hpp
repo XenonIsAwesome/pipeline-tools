@@ -3,16 +3,18 @@
 #include <utils/queues/IQueue.hpp>
 #include <utils/queues/moodycamel/readerwriterqueue.h>
 
-template<typename Q, typename T>
-concept MoodyQueue = requires(Q q, T t)
-{
-   { q.try_enqueue(t) } -> std::same_as<bool>;
-   { q.try_dequeue(t) } -> std::same_as<bool>;
-   { q.peek() } -> std::same_as<T*>;
-};
-
 namespace pt::utils::queues {
-    template<typename T, MoodyQueue<T> Q>
+    namespace concepts {
+        template<typename Q, typename T>
+        concept MoodyQueue = requires(Q q, T t)
+        {
+            { q.try_enqueue(t) } -> std::same_as<bool>;
+            { q.try_dequeue(t) } -> std::same_as<bool>;
+            { q.peek() } -> std::same_as<T*>;
+        };
+    }
+
+    template<typename T, concepts::MoodyQueue<T> Q>
     class MoodycamelQueue final : public IQueue<T> {
     public:
         explicit MoodycamelQueue(): queue_() {}
