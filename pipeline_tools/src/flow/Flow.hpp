@@ -52,12 +52,18 @@ namespace pt::flow {
             }
         }
 
-        // Consumer override point (e.g. Aggregator)
+        /**
+         * Consumer override point (e.g. Aggregator)
+         * @return The ID of the producer
+         */
         virtual size_t register_producer(std::shared_ptr<Flow>) { return 0; }
 
-        // Consumer override point (e.g. Aggregator, Source, Module)
+        /**
+         * Consumer override point (e.g. Producer)
+         * @param output The output to produce in a round-robin way
+         */
         virtual void round_robin(std::any output) {
-            throw std::runtime_error("RoundRobin not supported for this type");
+            throw std::runtime_error("Flow objects with a RoundRobin policy must return a vector");
         }
 
         // (next node, producer_id for *that* consumer)
