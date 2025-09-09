@@ -1,13 +1,13 @@
 #pragma once
 
 #include <optional>
-#include <flow/FlowWithOutput.hpp>
+#include <flow/Producer.hpp>
 
 namespace pt::flow {
     template<typename Out>
-    class Source : public FlowWithOutput<Out> {
+    class Source : public Producer<Out> {
     public:
-        explicit Source(const ProductionPolicy policy = ProductionPolicy::Fanout): FlowWithOutput<Out>(policy) {
+        explicit Source(const ProductionPolicy policy = ProductionPolicy::Fanout): Producer<Out>(policy) {
         }
 
         virtual std::optional<Out> process() = 0;
