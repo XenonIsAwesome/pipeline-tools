@@ -26,6 +26,7 @@ endif ()
 
 # ----------------- GTest target -----------------
 file(GLOB_RECURSE GTEST_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/testing_utils/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/*_tests.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/main_gtest.cpp"
 )
@@ -51,6 +52,7 @@ endif ()
 
 # ----------------- Benchmark target -----------------
 file(GLOB_RECURSE BM_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/testing_utils/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/BM_*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/main_BM.cpp"
 )
