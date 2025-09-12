@@ -9,21 +9,22 @@ public:
     virtual ~Singleton() = default;
 
     template<typename ...Args>
-    Derived* getInstance(Args... args) {
+    static Derived* getInstance(Args... args) {
         if (instance == nullptr) {
-            instance = new Derived(args...);
+            instance = new Derived(std::forward<Args>(args)...);
         }
         return instance;
     }
 
-    Derived* getInstance() {
+    static Derived* getInstance() {
         return getInstance<>();
     }
 
-
-
 private:
-    Derived* instance{nullptr};
+    static Derived* instance;
 };
+
+template<typename Derived>
+Derived* Singleton<Derived>::instance = nullptr;
 
 }

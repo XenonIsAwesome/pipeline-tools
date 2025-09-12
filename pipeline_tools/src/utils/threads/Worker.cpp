@@ -12,8 +12,6 @@ void pt::threads::Worker::allocate_cores(){
 }
 
 bool pt::threads::Worker::set_affinity() {
-    allocate_cores();
-
     cpu_set_t mask;
     CPU_ZERO(&mask);
 
@@ -39,6 +37,8 @@ bool pt::threads::Worker::set_name() const{
 }
 
 void pt::threads::Worker::start() {
+    allocate_cores();
+
     stop_flag.clear();
     worker_thread = std::thread([this]() {
         if (!set_affinity()) {

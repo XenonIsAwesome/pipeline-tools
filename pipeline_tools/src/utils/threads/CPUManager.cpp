@@ -7,8 +7,8 @@
 #include <iostream>
 #include <utils/threads/CPUManager.h>
 
-static constexpr std::filesystem::path ONLINE_CPUS_SYS_FILE_PATH = "/sys/devices/system/cpu/online";
-static constexpr std::filesystem::path ISOLATED_CPUS_SYS_FILE_PATH = "/sys/devices/system/cpu/isolated";
+static constexpr const char* ONLINE_CPUS_SYS_FILE_PATH = "/sys/devices/system/cpu/online";
+static constexpr const char* ISOLATED_CPUS_SYS_FILE_PATH = "/sys/devices/system/cpu/isolated";
 
 std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy policy) {
     if (policy.cores == 0) {
@@ -16,7 +16,7 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
     }
 
     std::vector<Core> allocated_cores;
-    auto manager = getInstance();
+    auto manager = CPUManager::getInstance();
 
     if (policy.cores > manager->online_cores.size()) {
         throw std::runtime_error("Not enough online cores to allocate");
@@ -33,8 +33,8 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
             }
 
             for (size_t i = 0; i < policy.cores; i++) {
-                allocated_cores.emplace_back(pinned.back(), AffinityType::PINNED);
-                allocated_cores.pop_back();
+                allocated_cores.emplace_back(pinned.back(), policy.affinity_type);
+                pinned.pop_back();
             }
 
             if (policy.affinity_type == AffinityType::NORMAL) {
@@ -51,9 +51,10 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
 
             // Allocating ISOLATED cores
             for (size_t i = 0; i < isolated_cores_to_alloc; i++) {
-                allocated_cores.push_back(isolated.back);
+                allocated_cores.emplace_back(isolated.back(), policy.affinity_type);
                 isolated.pop_back();
             }
+            manager->isolated_core_pool = std::move(isolated);
 
             // Allocating the rest as PINNED
             if (pinned_cores_to_alloc > 0) {
@@ -71,6 +72,8 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
                     allocated_cores.push_back(core);
                 }
             }
+
+            return allocated_cores;
     }
 
     manager->pinned_core_pool = std::move(pinned);
@@ -79,7 +82,7 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
     return allocated_cores;
 }
 
-void pt::threads::CPUManager::deallocate(const Core&& core) {
+void pt::threads::CPUManager::deallocate(const Core& core) {
     auto manager = getInstance();
 
     if (std::ranges::find(manager->online_cores, core.cpu_id) == manager->online_cores.end()) {
@@ -99,16 +102,16 @@ void pt::threads::CPUManager::deallocate(const Core&& core) {
             break;
     }
 
-    if (std::ranges::find(pool, core.cpu_id) == pool.end()) {
+    if (std::ranges::find(pool, core.cpu_id) != pool.end()) {
         std::cout << "[CPUManager::deallocate]:WARNING: Core with cpu_id " << core.cpu_id
             << " was not allocated." << std::endl;
     }
     pool.push_back(core.cpu_id);
 }
 
-void pt::threads::CPUManager::deallocate(const std::vector<Core>&& cores) {
-    for (auto&& core : cores) {
-        deallocate(std::move(core));
+void pt::threads::CPUManager::deallocate(const std::vector<Core>& cores) {
+    for (const Core& core : cores) {
+        deallocate(core);
     }
 }
 
@@ -134,4 +137,18 @@ void pt::threads::CPUManager::parse_cores() {
         auto it = std::ranges::find(pinned_core_pool, core);
         pinned_core_pool.erase(it);
     }
+}
+
+void pt::threads::CPUManager::print_cores() {
+    std::cout << "pinned: ";
+    for (auto core: pinned_core_pool) {
+        std::cout << core << ", ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "isolated: ";
+    for (auto core: isolated_core_pool) {
+        std::cout << core << ", ";
+    }
+    std::cout << std::endl;
 }

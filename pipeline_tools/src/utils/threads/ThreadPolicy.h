@@ -1,5 +1,7 @@
 #pragma once
+
 #include <pthread.h>
+#include <string>
 
 namespace pt::threads {
 
@@ -17,7 +19,7 @@ constexpr int CHOSEN_SCHED_ALGO = SCHED_FIFO;
 #define THREAD_PRIORITY_LOW ((THREAD_PRIORITY_NORMAL - THREAD_PRIORITY_LOWEST) / 2)
 
 struct ThreadPolicy {
-    std::string thread_name = "";
+    std::string thread_name;
 
     size_t cores;
     AffinityType affinity_type = AffinityType::NORMAL;
