@@ -1,20 +1,11 @@
-#include "CPUManager.h"
-
-
+#include <iostream>
+#include <utils/threads/CPUManager.h>
 #include <utils/threads/Worker.h>
 
 void pt::threads::Worker::allocate_cores(){
-    CPUManager::getInstance();
-
-    std::vector<Core> cores;
-    try {
-        cores = CPUManager::allocate(policy);
-    } catch (std::runtime_error& e) {
-        // TODO: warn / throw
-    }
-
+    std::vector<Core> cores = CPUManager::allocate(policy);
     if (cores.empty()) {
-        // TODO: throw
+        throw std::runtime_error("CPUManager couldn't allocate!");
     }
 
     allocated_cores = std::move(cores);
@@ -40,27 +31,27 @@ bool pt::threads::Worker::set_priority() const {
     return pthread_setschedparam(pthread_self(), SCHED_FIFO, &params) == 0;
 }
 
-bool pt::threads::Worker::set_name(){
+bool pt::threads::Worker::set_name() const{
     if (policy.thread_name.empty()) {
         return true;
     }
     return pthread_setname_np(pthread_self(), policy.thread_name.c_str()) == 0;
 }
 
-
-
-void pt::threads::Worker::start(){
+void pt::threads::Worker::start() {
+    stop_flag.clear();
     worker_thread = std::thread([this]() {
         if (!set_affinity()) {
-            // TODO: throw
+            throw std::runtime_error("Failed to set affinity! Are running with privileges?");
+
         }
 
         if (!set_priority()) {
-            // TODO: throw
+            throw std::runtime_error("Failed to set priority! Are running with privileges?");
         }
 
         if (!set_name()) {
-            // TODO: warn
+            std::cout << "[Worker]:WARNING: Couldn't set thread name" << std::endl;
         }
 
         func(stop_flag);
@@ -70,13 +61,14 @@ void pt::threads::Worker::start(){
 void pt::threads::Worker::stop(){
     stop_flag.notify_all();
 
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     if (worker_thread.joinable()) {
         worker_thread.join();
     } else {
-        // TODO: throw / warn
+        std::cout << "[Worker]:WARNING: Couldn't join the thread." << std::endl;
     }
 
-    CPUManager::getInstance();
-    CPUManager::deallocate(allocated_cores);
+    CPUManager::deallocate(std::move(allocated_cores));
+    allocated_cores = {};
 }
 

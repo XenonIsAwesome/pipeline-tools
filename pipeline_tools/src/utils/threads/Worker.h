@@ -27,8 +27,8 @@ private:
     void allocate_cores();
 
     bool set_affinity();
-    bool set_priority()const;
-    bool set_name();
+    bool set_priority() const;
+    bool set_name() const;
 
     ThreadPolicy policy;
     func_t func;
