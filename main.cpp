@@ -1,6 +1,4 @@
-#include "utils/threads/CPUManager.h"
-
-
+#include <utils/threads/CPUManager.h>
 #include <iostream>
 #include <utils/threads/Worker.h>
 
