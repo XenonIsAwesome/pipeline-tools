@@ -10,7 +10,7 @@
 #include <flow/blocks/Sink.hpp>
 #include <flow/blocks/Aggregator.hpp>
 #include <flow/blocks/Module.hpp>
-#include <utils/exceptions/unknown_flow_object_type.h>
+#include <flow/exceptions/unknown_flow_object_type.h>
 
 namespace pt::flow {
     class Pipeline {
