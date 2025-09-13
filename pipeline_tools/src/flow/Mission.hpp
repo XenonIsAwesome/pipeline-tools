@@ -34,6 +34,10 @@ namespace pt::flow {
          */
         virtual void build() = 0;
 
+        void add(const Pipeline& p) {
+            pipelines.push_back(p);
+        }
+
         template<typename ...Sources, typename ...Nodes, typename ...Sinks>
         requires (... && concepts::SourceLike<Sources>) &&
                 (... && concepts::NodeLike<Nodes>) &&
@@ -44,7 +48,7 @@ namespace pt::flow {
         {
             Pipeline p;
 
-            if constexpr (sizeof...(Sources)) {
+            if constexpr (sizeof...(Sources) != 0) {
                 std::apply([&p](auto &&... src) {
                     ((p.add(src)), ...);
                 }, sources.value());
@@ -52,13 +56,13 @@ namespace pt::flow {
                 p.add(make_queue_source<Nodes..., Sinks...>());
             }
 
-            if constexpr (sizeof...(Nodes)) {
+            if constexpr (sizeof...(Nodes) != 0) {
                 std::apply([&p](auto &&... node) {
                     ((p.add(node)), ...);
                 }, nodes.value());
             }
 
-            if constexpr (sizeof...(Sinks) > 0) {
+            if constexpr (sizeof...(Sinks) != 0) {
                 std::apply([&p](auto &&... sink) {
                     ((p.add(sink)), ...);
                 }, sinks.value());
@@ -66,7 +70,7 @@ namespace pt::flow {
                 p.add(make_queue_sink<Sources..., Nodes...>());
             }
 
-            pipelines.emplace_back(p);
+            pipelines.push_back(p);
         }
 
     private:

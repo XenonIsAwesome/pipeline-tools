@@ -24,7 +24,7 @@ void pt::flow::Mission::start(){
 }
 
 void pt::flow::Mission::stop(){
-    for (auto& w : workers) {
+    for (auto& w : std::ranges::reverse_view(workers)) {
         w.stop();
     }
     workers.clear();

@@ -68,7 +68,7 @@ void pt::threads::Worker::stop(){
         std::cout << "[Worker]:WARNING: Couldn't join the thread." << std::endl;
     }
 
-    CPUManager::deallocate(std::move(allocated_cores));
+    CPUManager::deallocate(allocated_cores);
     allocated_cores = {};
 }
 
