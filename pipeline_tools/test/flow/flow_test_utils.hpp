@@ -7,7 +7,15 @@
 
 class MockSink : public pt::flow::Sink<int> {
 public:
-    void process(int input) override { collected.push_back(input); }
+    MockSink(size_t collect_size = 128): Sink() {
+        collected.reserve(collect_size);
+    }
+
+    void process(int input) override {
+        if (collected.size() < collected.capacity()) {
+            collected.emplace_back(input);
+        }
+    }
     std::vector<int> collected;
 };
 

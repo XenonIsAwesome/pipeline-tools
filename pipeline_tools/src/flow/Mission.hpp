@@ -9,9 +9,45 @@
 #include <utils/queues/QueueFactory.hpp>
 
 namespace pt::flow {
+    namespace helpers {
+        template<typename...>
+        struct get_input_type_of_first_flow;
+
+        template<typename First, typename... Rest>
+        struct get_input_type_of_first_flow<First, Rest...> {
+            using type = typename First::input_type;
+        };
+
+        template<>
+        struct get_input_type_of_first_flow<> {
+            using type = void;
+        };
+
+        template<typename ...Flows>
+        using get_input_type_of_first_flow_t = typename get_input_type_of_first_flow<Flows...>::type;
+
+        template<typename ...>
+        struct get_output_type_of_last_flow {
+            using type = void;
+        };
+
+        template<typename Last>
+        struct get_output_type_of_last_flow<Last> {
+            using type = typename Last::output_type;
+        };
+
+        template<typename First, typename ...Rest>
+        struct get_output_type_of_last_flow<First, Rest...> {
+            using type = typename get_output_type_of_last_flow<Rest...>::type;
+        };
+
+        template<typename ...Flows>
+        using get_output_type_of_last_flow_t = typename get_output_type_of_last_flow<Flows...>::type;
+    }
+
     class Mission {
     public:
-        explicit Mission(queues::QueueType queue_type): queue_type(queue_type) {}
+        explicit Mission(queues::QueueType queue_type = queues::QueueType::LOCK_FREE): queue_type(queue_type) {}
         virtual ~Mission() = default;
 
         /**
@@ -51,7 +87,7 @@ namespace pt::flow {
             if constexpr (sizeof...(Sources) != 0) {
                 std::apply([&p](auto &&... src) {
                     ((p.add(src)), ...);
-                }, sources.value());
+                }, sources);
             } else {
                 p.add(make_queue_source<Nodes..., Sinks...>());
             }
@@ -59,13 +95,13 @@ namespace pt::flow {
             if constexpr (sizeof...(Nodes) != 0) {
                 std::apply([&p](auto &&... node) {
                     ((p.add(node)), ...);
-                }, nodes.value());
+                }, nodes);
             }
 
             if constexpr (sizeof...(Sinks) != 0) {
                 std::apply([&p](auto &&... sink) {
                     ((p.add(sink)), ...);
-                }, sinks.value());
+                }, sinks);
             } else {
                 p.add(make_queue_sink<Sources..., Nodes...>());
             }
@@ -86,50 +122,34 @@ namespace pt::flow {
         std::shared_ptr<queues::IQueue<T>> get_or_create_queue() {
             if (!queues.empty() && !queues.back().used) {
                 queues.back().used = true;
-                return utils::any_cast_with_info<std::shared_ptr<queues::IQueue<T>>&>(queues.back().queue);
+                return utils::any_cast_with_info<std::shared_ptr<queues::IQueue<T>>>(queues.back().queue);
             }
             auto q = queues::make_queue<T>(queue_type);
             queues.emplace_back(q);
             return q;
         }
 
-        template<typename ...Nodes, typename ...Sinks>
-        std::shared_ptr<Flow> make_queue_source() {
-            using queue_type = std::conditional_t<
-                sizeof...(Nodes) != 0,
-                typename std::tuple_element_t<0, std::tuple<Nodes...>>::input_type,
-                std::conditional_t<
-                    sizeof...(Sinks) != 0,
-                    typename std::tuple_element_t<0, std::tuple<Sinks...>>::input_type,
-                    void
-                >
-            >;
+        template<typename ...Flows>
+        requires (... && concepts::FlowLike<Flows>)
+        auto make_queue_source() {
+            using queue_t = helpers::get_input_type_of_first_flow_t<Flows...>;
+            static_assert(!std::is_same_v<queue_t, void>, "Cannot create a QueueSource, Both nodes and sinks are empty!");
 
-            static_assert(std::is_same_v<queue_type, void>, "Cannot create a QueueSource, Both nodes and sinks are empty!");
-
-            auto queue = get_or_create_queue<queue_type>();
-            return std::make_shared<modules::QueueSource<queue_type>>(queue);
+            auto queue = get_or_create_queue<queue_t>();
+            return std::make_shared<modules::QueueSource<queue_t>>(queue);
         }
 
-        template<typename ...Sources, typename ...Nodes>
-        std::shared_ptr<Flow> make_queue_sink() {
-            using queue_type = std::conditional_t<
-                sizeof...(Nodes) != 0,
-                typename std::tuple_element_t<sizeof...(Nodes) - 1, std::tuple<Nodes...>>::output_type,
-                std::conditional_t<
-                    sizeof...(Sources) != 0,
-                    typename std::tuple_element_t<sizeof...(Sources) - 1, std::tuple<Sources...>>::output_type,
-                    void
-                >
-            >;
+        template<typename ...Flows>
+        requires (... && concepts::FlowLike<Flows>)
+        auto make_queue_sink() {
+            using queue_t = helpers::get_output_type_of_last_flow_t<Flows...>;
+            static_assert(!std::is_same_v<queue_t, void>, "Cannot create a QueueSink, Both sources and nodes are empty!");
 
-            static_assert(std::is_same_v<queue_type, void>, "Cannot create a QueueSink, Both sources and nodes are empty!");
-
-            auto queue = get_or_create_queue<queue_type>();
-            return std::make_shared<modules::QueueSink<queue_type>>(queue);
+            auto queue = get_or_create_queue<queue_t>();
+            return std::make_shared<modules::QueueSink<queue_t>>(queue);
         }
 
         std::vector<Pipeline> pipelines; /**< The pipelines held in the mission */
-        std::vector<threads::Worker> workers; /**< threads running each pipeline */
+        std::vector<std::shared_ptr<threads::Worker>> workers; /**< threads running each pipeline */
     };
 }
