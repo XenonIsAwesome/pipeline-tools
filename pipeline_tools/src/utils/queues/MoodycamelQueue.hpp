@@ -15,7 +15,7 @@ namespace pt::queues {
     }
 
     template<typename T, concepts::MoodyQueue<T> Q>
-    class MoodycamelQueue : public IQueue<T> {
+    class MoodycamelQueue final : public IQueue<T> {
     public:
         explicit MoodycamelQueue(): queue_() {}
 

@@ -10,7 +10,7 @@ enum class AffinityType { NORMAL, PINNED, ISOLATED };
 
 // Priority
 using ThreadPriority = int;
-#define CHOSEN_SCHED_ALGO (SCHED_FIFO)
+constexpr int CHOSEN_SCHED_ALGO = SCHED_FIFO;
 
 #define THREAD_PRIORITY_HIGHEST (sched_get_priority_max(CHOSEN_SCHED_ALGO))
 #define THREAD_PRIORITY_LOWEST (sched_get_priority_min(CHOSEN_SCHED_ALGO))

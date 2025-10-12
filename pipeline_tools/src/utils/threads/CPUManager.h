@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <vector>
 #include <utils/Singleton.hpp>
 #include <utils/threads/ThreadPolicy.h>
@@ -14,7 +15,7 @@ public:
     static void deallocate(const Core& core);
     static void deallocate(const std::vector<Core>& cores);
 
-    void print_cores();
+    void print_cores() const;
 
 private:
     void parse_cores();
@@ -22,5 +23,6 @@ private:
     std::vector<int> online_cores;
     std::vector<int> isolated_core_pool;
     std::vector<int> pinned_core_pool;
+    std::mutex mutex_;
 };
 }

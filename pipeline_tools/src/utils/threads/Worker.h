@@ -16,9 +16,8 @@ public:
     Worker(const Worker& other):
         policy(other.policy), func(other.func) {}
 
-    ~Worker() {
-        this->stop();
-    }
+    Worker(const Worker&& other) noexcept:
+        policy(std::move(other.policy)), func(std::move(other.func)) {}
 
     void start();
 
@@ -27,9 +26,9 @@ public:
 private:
     void allocate_cores();
 
-    [[nodiscard]] bool set_affinity()const;
-    [[nodiscard]] bool set_priority() const;
-    [[nodiscard]] bool set_name() const;
+    bool set_affinity();
+    bool set_priority() const;
+    bool set_name() const;
 
     ThreadPolicy policy;
     func_t func;

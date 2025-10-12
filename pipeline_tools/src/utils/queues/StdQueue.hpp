@@ -7,33 +7,45 @@ namespace pt::queues {
     template<typename T>
     class StdQueue final : public IQueue<T> {
     public:
-        explicit StdQueue(): queue_() {
-        }
+        explicit StdQueue(): queue_() {}
 
         T& peek() override {
-            return queue_.front();
+            mutex_.lock();
+            auto& val = queue_.front();
+            mutex_.unlock();
+
+            return val;
         }
 
         bool pop(T& item) override {
-            if (queue_.empty()) return false;
+            mutex_.lock();
+            if (queue_.empty()) {
+                return false;
+            }
 
             item = this->peek();
             queue_.pop();
+            mutex_.unlock();
 
             return true;
         }
 
         bool push(const T& item) override {
+            mutex_.lock();
             queue_.push(std::move(item));
+            mutex_.unlock();
             return true;
         }
 
         bool push(const T&& item) override {
+            mutex_.lock();
             queue_.push(std::move(item));
+            mutex_.unlock();
             return true;
         }
 
     private:
         std::queue<T> queue_;
+        std::mutex mutex_;
     };
 }

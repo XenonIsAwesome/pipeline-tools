@@ -11,7 +11,7 @@ void pt::threads::Worker::allocate_cores(){
     allocated_cores = std::move(cores);
 }
 
-bool pt::threads::Worker::set_affinity() const {
+bool pt::threads::Worker::set_affinity() {
     cpu_set_t mask;
     CPU_ZERO(&mask);
 
@@ -23,7 +23,7 @@ bool pt::threads::Worker::set_affinity() const {
 }
 
 bool pt::threads::Worker::set_priority() const {
-    sched_param params{};
+    sched_param params;
     params.sched_priority = policy.priority;
 
     return pthread_setschedparam(pthread_self(), SCHED_FIFO, &params) == 0;
@@ -43,6 +43,7 @@ void pt::threads::Worker::start() {
     worker_thread = std::thread([this]() {
         if (!set_affinity()) {
             throw std::runtime_error("Failed to set affinity! Are running with privileges?");
+
         }
 
         if (!set_priority()) {
@@ -58,16 +59,16 @@ void pt::threads::Worker::start() {
 }
 
 void pt::threads::Worker::stop(){
-    stop_flag.test_and_set(std::memory_order_relaxed);
+    stop_flag.notify_all();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     if (worker_thread.joinable()) {
         worker_thread.join();
     } else {
         std::cout << "[Worker]:WARNING: Couldn't join the thread." << std::endl;
     }
 
-    CPUManager::deallocate(allocated_cores);
+    CPUManager::deallocate(std::move(allocated_cores));
     allocated_cores = {};
 }
 
