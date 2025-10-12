@@ -1,6 +1,5 @@
 #include "utils/utils.h"
 
-
 #include <filesystem>
 #include <fstream>
 #include <iosfwd>
@@ -139,7 +138,7 @@ void pt::threads::CPUManager::parse_cores() {
     }
 }
 
-void pt::threads::CPUManager::print_cores() {
+void pt::threads::CPUManager::print_cores() const {
     std::cout << "pinned: ";
     for (auto core: pinned_core_pool) {
         std::cout << core << ", ";
