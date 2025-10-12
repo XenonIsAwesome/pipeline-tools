@@ -15,9 +15,11 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
     }
 
     std::vector<Core> allocated_cores;
-    auto manager = CPUManager::getInstance();
+    auto manager = getInstance();
+    manager->mutex_.lock();
 
     if (policy.cores > manager->online_cores.size()) {
+        manager->mutex_.unlock();
         throw std::runtime_error("Not enough online cores to allocate");
     }
 
@@ -28,6 +30,7 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
         case AffinityType::NORMAL:
         case AffinityType::PINNED:
             if (policy.cores > pinned.size()) {
+                manager->mutex_.unlock();
                 throw std::runtime_error("Not enough non-isolated cores to allocate");
             }
 
@@ -37,11 +40,13 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
             }
 
             if (policy.affinity_type == AffinityType::NORMAL) {
+                manager->mutex_.unlock();
                 return allocated_cores;
             }
             break;
         case AffinityType::ISOLATED:
             if (policy.strict && policy.cores > isolated.size()) {
+                manager->mutex_.unlock();
                 throw std::runtime_error("Not enough isolated cores to allocate");
             }
 
@@ -72,12 +77,14 @@ std::vector<pt::threads::Core> pt::threads::CPUManager::allocate(ThreadPolicy po
                 }
             }
 
+            manager->mutex_.unlock();
             return allocated_cores;
     }
 
     manager->pinned_core_pool = std::move(pinned);
     manager->isolated_core_pool = std::move(isolated);
 
+    manager->mutex_.unlock();
     return allocated_cores;
 }
 
