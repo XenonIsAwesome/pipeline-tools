@@ -1,29 +1,33 @@
-#include <memory>
-#include <flow/Pipeline.hpp>
-#include <modules/io/ConstantSource.hpp>
-#include <modules/io/PrintSink.hpp>
-#include <modules/math/AdditionModule.hpp>
+#include "utils/threads/CPUManager.h"
+
+
+#include <iostream>
+#include <utils/threads/Worker.h>
 
 int main() {
-    pt::flow::Pipeline p;
+    pt::threads::Worker wa({.cores = 2, .affinity_type = pt::threads::AffinityType::PINNED}, [](std::atomic_flag& flag) {
+        while (flag.test()) {
+            std::cout << "A" << std::endl;
+        }
+    });
 
-    p.add(std::make_shared<pt::modules::ConstantSource<int> >(1));
+    pt::threads::Worker wb({.cores = 2, .affinity_type = pt::threads::AffinityType::NORMAL}, [](std::atomic_flag& flag) {
+        while (flag.test()) {
+            std::cout << "B" << std::endl;
+        }
+    });
 
-    auto mod_a = std::make_shared<pt::modules::AdditionModule<int, int, int> >(1);
-    p.add(mod_a);
+    pt::threads::CPUManager::getInstance()->print_cores();
 
-    auto mod_b = std::make_shared<pt::modules::AdditionModule<int, int, int> >(2);
-    p.add(mod_b);
+    wa.start();
+    wb.start();
 
-    auto mod_c = std::make_shared<pt::modules::AdditionModule<int, int, int> >(3);
-    p.add(mod_c);
+    pt::threads::CPUManager::getInstance()->print_cores();
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    pt::flow::connect(mod_a, mod_c);
+    wa.stop();
+    wb.stop();
 
-    auto sink = std::make_shared<pt::modules::PrintSink<int> >();
-    p.add(sink);
+    pt::threads::CPUManager::getInstance()->print_cores();
 
-    pt::flow::connect(mod_b, sink);
-
-    p.execute();
 }
