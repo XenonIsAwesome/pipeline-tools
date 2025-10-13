@@ -1,10 +1,12 @@
 #pragma once
 
+#include <ranges>
 #include <utils/threads/Worker.h>
 #include <modules/io/queue/QueueSink.hpp>
 #include <modules/io/queue/QueueSource.hpp>
 #include <flow/concepts.h>
 #include <flow/Pipeline.hpp>
+#include <flow/PipelineProvider.h>
 #include <utils/queues/IQueue.hpp>
 #include <utils/queues/QueueFactory.hpp>
 
@@ -45,6 +47,7 @@ namespace pt::flow {
         using get_output_type_of_last_flow_t = typename get_output_type_of_last_flow<Flows...>::type;
     }
 
+    template<concepts::PipelineProvider InputPP = void, concepts::PipelineProvider OutputPP = void>
     class Mission {
     public:
         explicit Mission(queues::QueueType queue_type = queues::QueueType::LOCK_FREE): queue_type(queue_type) {}
@@ -54,13 +57,42 @@ namespace pt::flow {
          * Starts all pipelines in the opposite order they were created in.
          * (last pipeline added, starts first)
          */
-        void start();
+        void start(){
+            // build all the pipelines
+            this->build_wrapper();
+
+            // clear old workers if Mission was reused
+            workers.clear();
+            workers.reserve(pipelines.size());
+
+            // start pipelines in reverse order
+            for (auto& pipeline : std::ranges::reverse_view(pipelines)) {
+                threads::ThreadPolicy policy{
+                    .cores = 1,
+                    .affinity_type = threads::AffinityType::PINNED,
+                    .priority = THREAD_PRIORITY_LOWEST
+                };
+
+                auto func = [&pipeline](std::atomic_flag& flag) -> void {
+                    while (!flag.test(std::memory_order_relaxed)) {
+                        pipeline.execute();
+                    }
+                };
+                workers.emplace_back(std::make_shared<threads::Worker>(std::move(policy), std::move(func)));
+                workers.back()->start();
+            }
+        }
 
         /**
          * Stops all pipeline in the order they were created in.
          * (last pipeline added, stops last)
          */
-        void stop();
+        void stop(){
+            for (auto& w : std::ranges::reverse_view(workers)) {
+                w->stop();
+            }
+            workers.clear();
+        }
 
     protected:
         /**
@@ -110,6 +142,20 @@ namespace pt::flow {
         }
 
     private:
+        void build_wrapper() {
+            if constexpr (!std::is_same_v<InputPP, void>) {
+                InputPP input_pp;
+                add(input_pp.build_input());
+            }
+
+            build();
+
+            if constexpr (!std::is_same_v<OutputPP, void>) {
+                OutputPP output_pp;
+                add(output_pp.build_output());
+            }
+        }
+
         queues::QueueType queue_type;
 
         struct QueueWrapper {

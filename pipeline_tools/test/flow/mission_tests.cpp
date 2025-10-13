@@ -3,7 +3,7 @@
 #include <modules/io/ConstantSource.hpp>
 #include <gtest/gtest.h>
 
-class MockMission: public pt::flow::Mission {
+class MockMission: public pt::flow::Mission<> {
 public:
     [[nodiscard]] std::vector<int> get_collected() const {
         if (sink == nullptr) {

@@ -59,6 +59,7 @@ void pt::threads::Worker::start() {
 }
 
 void pt::threads::Worker::stop(){
+    stop_flag.test_and_set(std::memory_order_relaxed);
     stop_flag.notify_all();
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -68,7 +69,7 @@ void pt::threads::Worker::stop(){
         std::cout << "[Worker]:WARNING: Couldn't join the thread." << std::endl;
     }
 
-    CPUManager::deallocate(std::move(allocated_cores));
+    CPUManager::deallocate(allocated_cores);
     allocated_cores = {};
 }
 
