@@ -1,0 +1,26 @@
+#pragma once
+
+#include <pt/core/flow/blocks/Aggregator.hpp>
+#include <pt/core/modules/math/concepts.h>
+
+namespace pt::modules {
+    template<typename In, typename Out>
+        requires concepts::Addable<In, In, Out>
+    class SumAggregator : public flow::Aggregator<In, Out> {
+    public:
+        SumAggregator(Out default_value): flow::Aggregator<In, Out>(), default_value(default_value) {
+        }
+
+        std::optional<Out> process(std::vector<In> inputs) {
+            Out sum = default_value;
+            for (In input: inputs) {
+                sum += input;
+            }
+
+            return std::move(sum);
+        }
+
+    private:
+        Out default_value;
+    };
+}
