@@ -5,5 +5,5 @@
 
 namespace pt::queues {
     template<typename T>
-    class LockFreeQueue final: public MoodycamelQueue<moodycamel::ReaderWriterQueue<T>, T> {};
+    class LockFreeQueue final: public MoodycamelQueue<T, moodycamel::ReaderWriterQueue<T>> {};
 }

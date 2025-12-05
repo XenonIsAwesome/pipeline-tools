@@ -15,7 +15,7 @@ namespace pt::queues {
     }
 
     template<typename T, concepts::MoodyQueue<T> Q>
-    class MoodycamelQueue final : public IQueue<T> {
+    class MoodycamelQueue : public IQueue<T> {
     public:
         explicit MoodycamelQueue(): queue_() {}
 
@@ -30,6 +30,7 @@ namespace pt::queues {
         bool push(const T& item) override {
             return queue_.try_enqueue(std::move(item));
         }
+
         bool push(const T&& item) override {
             return queue_.try_enqueue(std::move(item));
         }
