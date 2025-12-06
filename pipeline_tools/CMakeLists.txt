@@ -1,11 +1,11 @@
 find_package(nlohmann_json QUIET)
 if (NOT nlohmann_json_FOUND)
-    option(NLOHMANN_JSON_TAG "Tag of the nlohmann_json library" "master")
+    option(NLOHMANN_JSON_TAG "Tag of the nlohmann_json library" "v3.12.0")
     include(FetchContent)
     FetchContent_Declare(
             nlohmann_json
             GIT_REPOSITORY https://github.com/nlohmann/json.git
-            GIT_TAG ${RABBITMQ_C_TAG}
+            GIT_TAG ${NLOHMANN_JSON_TAG}
     )
     FetchContent_MakeAvailable(nlohmann_json)
 endif()
@@ -24,7 +24,7 @@ endif()
 
 find_package(SimpleAmqpClient QUIET)
 if (NOT SimpleAmqpClient_FOUND)
-    option(SIMPLEAMQPCLIENT_TAG "Tag of the SimpleAmqpClient library" "master")
+    option(SIMPLEAMQPCLIENT_TAG "Tag of the SimpleAmqpClient library" "v2.5.1")
     include(FetchContent)
     FetchContent_Declare(
             SimpleAmqpClient

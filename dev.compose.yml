@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pipeline_tools_dev
+    volumes:
+      - "${PWD}:/app"
+      - "build-cache:/build"
+    command: bash -c "cd /app && cmake -S . -B /build && cmake --build /build --target pt-core-gtest && /build/pipeline_tools/test/pt-core-gtest"
+    develop:
+      watch:
+        - action: sync
+          path: ${PWD}
+          target: /app
+        - action: rebuild      # re-run the build when C++ changes
+          path: pipeline_tools            # trigger rebuild only when code changes
+        - action: rebuild
+          path: CMakeLists.txt
+        - action: rebuild
+          path: main.cpp
+
+volumes:
+  build-cache:
