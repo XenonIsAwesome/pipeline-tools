@@ -58,4 +58,4 @@ file(GLOB_RECURSE BM_SOURCES
 )
 
 add_executable(${CORE_LIB_NAME}-benchmark ${BM_SOURCES})
-target_link_libraries(${CORE_LIB_NAME}-gtest PRIVATE benchmark pthread ${CORE_LIB_NAME})
+target_link_libraries(${CORE_LIB_NAME}-benchmark PRIVATE benchmark pthread ${CORE_LIB_NAME})
