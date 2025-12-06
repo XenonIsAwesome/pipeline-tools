@@ -1,33 +1,17 @@
-#include <utils/queues/LockFreeQueue.hpp>
+#include <utils/ipc/rmq/utils.h>
 #include <utils/threads/CPUManager.h>
-
-
 #include <iostream>
 #include <utils/threads/Worker.h>
 
+#include <utils/ipc/rmq/Publisher.hpp>
+#include <utils/ipc/rmq/Consumer.hpp>
+#include <modules/math/SumAggregator.hpp>
+
 int main() {
-    pt::threads::Worker wa({.cores = 2, .affinity_type = pt::threads::AffinityType::PINNED}, [](std::atomic_flag& flag) {
-        while (flag.test()) {
-            std::cout << "A" << std::endl;
-        }
-    });
+    std::cout << "Hello World!" << std::endl;
 
-    pt::threads::Worker wb({.cores = 2, .affinity_type = pt::threads::AffinityType::NORMAL}, [](std::atomic_flag& flag) {
-        while (flag.test()) {
-            std::cout << "B" << std::endl;
-        }
-    });
-
-    pt::threads::CPUManager::getInstance()->print_cores();
-
-    wa.start();
-    wb.start();
-
-    pt::threads::CPUManager::getInstance()->print_cores();
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    wa.stop();
-    wb.stop();
-
-    pt::threads::CPUManager::getInstance()->print_cores();
+    while (true) {
+        pt::ipc::rmq::publish_message_to_queue<std::string>("Hello World", "pt_test");
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 }
