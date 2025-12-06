@@ -1,6 +1,6 @@
 #pragma once
 
-#include <flow/Sink.hpp>
+#include <flow/blocks/Sink.hpp>
 #include <utils/ipc/rmq/Publisher.hpp>
 
 namespace pt::modules {

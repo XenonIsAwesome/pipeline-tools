@@ -1,7 +1,7 @@
 #pragma once
 
 #include <flow/blocks/Source.hpp>
-#include <utils/ipc/rmq/Consumer
+#include <utils/ipc/rmq/Consumer.hpp>
 
 namespace pt::modules {
 template<typename T>
