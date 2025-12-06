@@ -41,12 +41,13 @@ file(GLOB_RECURSE CORE_SOURCES
 
 # Create the library
 add_library(${CORE_LIB_NAME} ${CORE_SOURCES})
+
+# Add the src/ folder to include paths
 target_include_directories(${CORE_LIB_NAME}
         PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 target_link_libraries(${CORE_LIB_NAME} INTERFACE nlohmann_json::nlohmann_json SimpleAmqpClient)
-
 
 set(PT_CORE_ENABLE_TESTING "Enable testing for ${CORE_LIB_NAME}" ON)
 if (PT_CORE_ENABLE_TESTING)

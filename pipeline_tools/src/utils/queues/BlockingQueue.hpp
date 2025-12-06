@@ -5,5 +5,6 @@
 
 namespace pt::queues {
 template<typename T>
-class BlockingQueue final: public MoodycamelQueue<T, moodycamel::BlockingReaderWriterQueue<T>> {};
-}
+class BlockingQueue final :
+    public MoodycamelQueue<T, moodycamel::BlockingReaderWriterQueue<T>> {};
+}   // namespace pt::queues
