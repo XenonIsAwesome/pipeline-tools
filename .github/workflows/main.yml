@@ -15,6 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Download libraries
+        run: apt-get update && apt-get install -ygit wget unzip cmake make gcc g++ libssl-dev nlohmann-json3-dev libgtest-dev libbenchmark-dev librabbitmq-dev libboost1.74-all-dev
+
       - name: Configure CMake
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
