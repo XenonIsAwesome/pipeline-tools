@@ -23,6 +23,10 @@ bool pt::threads::Worker::set_affinity() {
 }
 
 bool pt::threads::Worker::set_priority() const {
+    if (policy.priority <= THREAD_PRIORITY_LOWEST) {
+        return true;
+    }
+
     sched_param params;
     params.sched_priority = policy.priority;
 
@@ -59,7 +63,7 @@ void pt::threads::Worker::start() {
 }
 
 void pt::threads::Worker::stop(){
-    stop_flag.notify_all();
+    stop_flag.test_and_set(std::memory_order::relaxed);
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
     if (worker_thread.joinable()) {

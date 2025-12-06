@@ -32,7 +32,7 @@ file(GLOB_RECURSE GTEST_SOURCES
 )
 
 add_executable(${CORE_LIB_NAME}-gtest ${GTEST_SOURCES})
-target_link_libraries(${CORE_LIB_NAME}-gtest PRIVATE gtest gtest_main pthread libpt)
+target_link_libraries(${CORE_LIB_NAME}-gtest PRIVATE gtest gtest_main pthread ${CORE_LIB_NAME})
 # assuming "libpt" is your main library
 
 add_test(NAME ${CORE_LIB_NAME}-gtest COMMAND ${CORE_LIB_NAME}-gtest)
@@ -58,4 +58,4 @@ file(GLOB_RECURSE BM_SOURCES
 )
 
 add_executable(${CORE_LIB_NAME}-benchmark ${BM_SOURCES})
-target_link_libraries(${CORE_LIB_NAME}-gtest PRIVATE benchmark pthread libpt)
+target_link_libraries(${CORE_LIB_NAME}-gtest PRIVATE benchmark pthread ${CORE_LIB_NAME})
