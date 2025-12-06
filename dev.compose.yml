@@ -7,7 +7,7 @@ services:
     volumes:
       - "${PWD}:/app"
       - "build-cache:/build"
-    command: bash -c "cd /app && cmake -S . -B /build && cmake --build /build --target pt-core-gtest && /build/pipeline_tools/test/pt-core-gtest"
+    command: bash -c "cd /app && cmake -S . -B /build && cmake --build /build && /build/pipeline_tools/test/pt-core-gtest && /build/pipeline_tools/test/pt-core-benchmark && /build/pt-example"
     develop:
       watch:
         - action: sync
