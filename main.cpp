@@ -1,4 +1,5 @@
-#include "utils/threads/CPUManager.h"
+#include <utils/queues/LockFreeQueue.hpp>
+#include <utils/threads/CPUManager.h>
 
 
 #include <iostream>
@@ -29,5 +30,4 @@ int main() {
     wb.stop();
 
     pt::threads::CPUManager::getInstance()->print_cores();
-
 }

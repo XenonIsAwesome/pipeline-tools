@@ -10,7 +10,7 @@ namespace pt::modules {
         explicit QueueSink(std::shared_ptr<queues::IQueue<T>> queue): queue_(queue) {
         }
 
-        void process(const T &item) override {
+        void process(T item) override {
             queue_->push(std::move(item));
         }
 

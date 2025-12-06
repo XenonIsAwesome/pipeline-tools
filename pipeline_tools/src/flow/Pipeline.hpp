@@ -1,5 +1,8 @@
 #pragma once
 
+#include "concepts.h"
+
+
 #include <memory>
 #include <vector>
 #include <flow/Flow.hpp>
@@ -7,7 +10,7 @@
 #include <flow/blocks/Sink.hpp>
 #include <flow/blocks/Aggregator.hpp>
 #include <flow/blocks/Module.hpp>
-#include <utils/exceptions/unknown_flow_object_type.h>
+#include <flow/exceptions/unknown_flow_object_type.h>
 
 namespace pt::flow {
     class Pipeline {
@@ -33,12 +36,14 @@ namespace pt::flow {
          * @tparam FOut Output type of the flow object
          * @param f pt::flow::Flow object to add to the pipeline
          * @return The same flow object that was added to the pipeline
+         * @throws utils::exceptions::unknown_flow_object_type When an unknown flow object
          */
         template<
             typename F,
             typename FIn = typename F::input_type,
             typename FOut = typename F::output_type>
-        std::shared_ptr<F> add(std::shared_ptr<F> f) {
+        std::shared_ptr<F> add(std::shared_ptr<F> f)
+            requires std::derived_from<F, Flow> {
             if constexpr (std::derived_from<F, Source<FOut> >) {
                 sources.push_back(f);
                 if (!nodes.empty()) {
@@ -81,4 +86,51 @@ namespace pt::flow {
         std::vector<std::shared_ptr<Flow> > sources{};
         std::vector<std::shared_ptr<Flow> > nodes{};
     };
+} // namespace pt::flow
+
+namespace pt::flow {
+    /**
+     * Builds a pipeline in one function call
+     * @tparam Srcs pt::flow::Source (type)
+     * @tparam Nodes pt::flow::Module / pt::flow::Aggregator (type)
+     * @tparam Snks pt::flow::Sink (type)
+     * @param sources Tuple of pt::flow::Source flow objects
+     * @param nodes Tuple of pt::flow::Module / pt::flow::Aggregator flow objects
+     * @param sinks Tuple of pt::flow::Sink flow objects
+     * @return The fully built pipeline.
+     */
+    template<
+        typename... Srcs,
+        typename... Nodes,
+        typename... Snks
+    >
+    Pipeline make_pipeline(
+        std::tuple<std::shared_ptr<Srcs>...> sources,
+        std::tuple<std::shared_ptr<Nodes>...> nodes,
+        std::tuple<std::shared_ptr<Snks>...> sinks
+    )
+        requires (... && concepts::SourceLike<Srcs>) &&
+                 (... && concepts::NodeLike<Nodes>) &&
+                 (... && concepts::SinkLike<Snks>) {
+        Pipeline p;
+
+        if constexpr (sizeof...(Nodes) == 0) {
+            // TODO: allow for empty pipelines (maybe)
+            throw std::runtime_error("Pipeline is empty");
+        }
+
+        std::apply([&p](auto &&... src) {
+            ((p.add(src)), ...);
+        }, sources);
+
+        std::apply([&p](auto &&... node) {
+            ((p.add(node)), ...);
+        }, nodes);
+
+        std::apply([&p](auto &&... snk) {
+            ((p.add(snk)), ...);
+        }, sinks);
+
+        return p;
+    }
 } // namespace pt::flow

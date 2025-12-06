@@ -3,6 +3,7 @@
 #include <any>
 #include <iostream>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -32,7 +33,7 @@ namespace pt::flow {
 
         void execute(std::any in = {}, size_t producer_id = 0) {
             auto output = process_any(std::move(in), producer_id);
-            if (output.has_value())
+            if (output.type() != typeid(std::nullopt_t) && output.has_value())
                 produce(std::move(output));
         }
 
