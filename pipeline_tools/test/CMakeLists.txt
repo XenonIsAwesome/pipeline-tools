@@ -31,11 +31,11 @@ file(GLOB_RECURSE GTEST_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/main_gtest.cpp"
 )
 
-add_executable(libpt-gtest ${GTEST_SOURCES})
-target_link_libraries(libpt-gtest PRIVATE gtest gtest_main pthread libpt)
+add_executable(${CORE_LIB_NAME}-gtest ${GTEST_SOURCES})
+target_link_libraries(${CORE_LIB_NAME}-gtest PRIVATE gtest gtest_main pthread libpt)
 # assuming "libpt" is your main library
 
-add_test(NAME libpt-gtest COMMAND libpt-gtest)
+add_test(NAME ${CORE_LIB_NAME}-gtest COMMAND ${CORE_LIB_NAME}-gtest)
 
 # Check if gtest is already installed
 find_package(benchmark QUIET)
@@ -57,5 +57,5 @@ file(GLOB_RECURSE BM_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/main_BM.cpp"
 )
 
-add_executable(libpt-benchmark ${BM_SOURCES})
-target_link_libraries(libpt-benchmark PRIVATE benchmark pthread libpt)
+add_executable(${CORE_LIB_NAME}-benchmark ${BM_SOURCES})
+target_link_libraries(${CORE_LIB_NAME}-gtest PRIVATE benchmark pthread libpt)
