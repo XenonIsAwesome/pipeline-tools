@@ -1,5 +1,3 @@
-set(CORE_LIB_NAME ${PROJECT_NAME}-core)
-
 find_package(nlohmann_json QUIET)
 if (NOT nlohmann_json_FOUND)
     option(NLOHMANN_JSON_TAG "Tag of the nlohmann_json library" "master")
@@ -36,15 +34,21 @@ if (NOT SimpleAmqpClient_FOUND)
     FetchContent_MakeAvailable(SimpleAmqpClient)
 endif()
 
-# Create the library
+# Recursively glob all .cpp files in src/
 file(GLOB_RECURSE CORE_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 )
+
+# Create the library
 add_library(${CORE_LIB_NAME} ${CORE_SOURCES})
-target_include_directories(${CORE_LIB_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_include_directories(${CORE_LIB_NAME}
+        PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+)
 target_link_libraries(${CORE_LIB_NAME} INTERFACE nlohmann_json::nlohmann_json SimpleAmqpClient)
 
-set(ENABLE_TESTS "Enable testing for libpt" ON)
-if (ENABLE_TESTS)
+
+set(PT_CORE_ENABLE_TESTING "Enable testing for ${CORE_LIB_NAME}" ON)
+if (PT_CORE_ENABLE_TESTING)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/test")
 endif ()

@@ -20,17 +20,14 @@ jobs:
 
       - name: Build All Targets
         run: |
-          cmake --build build --target pt-example
-          cmake --build build --target libpt-gtest
-          cmake --build build --target libpt-benchmark
-
+          cmake --build build --target all
       - name: Run GTest
-        run: ./build/pipeline_tools/test/libpt-gtest
+        run: ./build/pipeline_tools/test/pt-core-gtest
 
       - name: Run Benchmarks and Save Output
         run: |
           mkdir -p ./out
-          ./build/pipeline_tools/test/libpt-benchmark | tee ./out/benchmark.log
+          ./build/pipeline_tools/test/pt-core-benchmark | tee ./out/benchmark.log
 
       - name: Upload Benchmark Artifact
         uses: actions/upload-artifact@v4
