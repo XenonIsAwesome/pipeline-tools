@@ -11,24 +11,22 @@ before_script:
 Build All:
   stage: build
   script:
-    - cmake --build $BUILD_DIR --target pt-example
-    - cmake --build $BUILD_DIR --target libpt-gtest
-    - cmake --build $BUILD_DIR --target libpt-benchmark
+    - cmake --build $BUILD_DIR --target all
 
 Test GTest:
   stage: test
   script:
-    - cmake --build $BUILD_DIR --target libpt-gtest
-    - ./$BUILD_DIR/pipeline_tools/test/libpt-gtest
+    - cmake --build $BUILD_DIR --target pt-core-gtest
+    - ./$BUILD_DIR/pipeline_tools/test/pt-core-gtest
   needs:
     - Build All
 
 Test Benchmark:
   stage: test
   script:
-    - cmake --build $BUILD_DIR --target libpt-benchmark
+    - cmake --build $BUILD_DIR --target pt-core-benchmark
     - mkdir -p ./out
-    - ./$BUILD_DIR/pipeline_tools/test/libpt-benchmark | tee ./out/benchmark.log
+    - ./$BUILD_DIR/pipeline_tools/test/pt-core-benchmark | tee ./out/benchmark.log
   needs:
     - Build All
   artifacts:
