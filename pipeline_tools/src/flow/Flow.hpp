@@ -4,8 +4,10 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <set>
 #include <utility>
 #include <vector>
+#include <flow/NodeRED.hpp>
 
 
 namespace pt::flow {
@@ -21,10 +23,117 @@ namespace pt::flow {
         using input_type = void;
         using output_type = void;
 
-        explicit Flow(const ProductionPolicy policy = ProductionPolicy::Fanout): policy(policy) {
+        explicit Flow(const ProductionPolicy policy = ProductionPolicy::Fanout)
+            : policy(policy), noderd_enabled(false) {
         }
 
         virtual std::any process_any(std::any in, size_t producer_id) = 0;
+
+        // ============================================================
+        // Node-RED Integration Methods
+        // ============================================================
+
+        /**
+         * Enable Node-RED integration for this Flow
+         * @param metadata Node-RED metadata (ID, type, label, etc.)
+         */
+        void enable_noderd_integration(const noderd::NodeREDMetadata& metadata) {
+            noderd_enabled = true;
+            noderd_metadata = metadata;
+        }
+
+        /**
+         * Get Node-RED metadata for this Flow
+         * @return Metadata for Node-RED serialization
+         */
+        const noderd::NodeREDMetadata& get_noderd_metadata() const {
+            return noderd_metadata;
+        }
+
+        /**
+         * Check if this Flow is integrated with Node-RED
+         * @return true if Node-RED integration is enabled
+         */
+        bool is_noderd_enabled() const {
+            return noderd_enabled;
+        }
+
+        /**
+         * Serialize this Flow and all downstream Flows to Node-RED JSON format
+         * Enables visual editing in Node-RED editor
+         * @return JSON object containing nodes and wires
+         */
+        json serialize_to_noderd() const {
+            json flow;
+            json nodes = json::array();
+            json wires = json::array();
+
+            // Collect all flows in graph using DFS with raw pointers
+            std::set<const Flow*> visited;
+            std::vector<const Flow*> to_visit = {this};
+            std::map<const Flow*, size_t> flow_to_index;
+
+            size_t node_index = 0;
+            while (!to_visit.empty()) {
+                const Flow* current = to_visit.back();
+                to_visit.pop_back();
+
+                if (visited.count(current)) {
+                    continue;
+                }
+
+                visited.insert(current);
+                flow_to_index[current] = node_index++;
+
+                if (current->noderd_enabled) {
+                    nodes.push_back(current->noderd_metadata.to_json());
+                }
+
+                // Add downstream flows
+                for (const auto& [next, _] : current->next_nodes) {
+                    if (!visited.count(next.get())) {
+                        to_visit.push_back(next.get());
+                    }
+                }
+            }
+
+            // Create wires from topology
+            for (const Flow* flow : visited) {
+                if (flow_to_index.count(flow) && flow->noderd_enabled) {
+                    for (const auto& [next, _] : flow->next_nodes) {
+                        if (visited.count(next.get()) && next->noderd_enabled) {
+                            json wire;
+                            wire["source"] = flow->noderd_metadata.node_id;
+                            wire["target"] = next->noderd_metadata.node_id;
+                            wires.push_back(wire);
+                        }
+                    }
+                }
+            }
+
+            flow["nodes"] = nodes;
+            flow["wires"] = wires;
+            return flow;
+        }
+
+        /**
+         * Execute with Node-RED message envelope input
+         * Automatically deserializes typed message back to C++ std::any
+         * @param envelope JSON message envelope from Node-RED
+         */
+        void execute_from_noderd_message(const json& envelope) {
+            noderd::MessageEnvelope msg = noderd::MessageEnvelope::from_json(envelope);
+            std::any input = noderd::deserialize_to_any(msg);
+            execute(std::move(input), 0);
+        }
+
+        /**
+         * Get the last output message in Node-RED envelope format
+         * @return JSON message envelope of the last produced output
+         */
+        json get_last_output_as_noderd() const {
+            return last_output_envelope.to_json();
+        }
 
         void add_next(const std::shared_ptr<Flow> &next) {
             size_t id = next->register_producer(next);
@@ -39,6 +148,12 @@ namespace pt::flow {
 
     protected:
         virtual void produce(std::any output) {
+            // Capture for Node-RED serialization
+            if (noderd_enabled) {
+                last_output_envelope = noderd::MessageEnvelope::from_any(
+                    output, noderd_metadata.node_id);
+            }
+
             if (policy == ProductionPolicy::RoundRobin) [[likely]] {
                 round_robin(std::move(output));
             } else if (policy == ProductionPolicy::Fanout) [[likely]] {
@@ -72,6 +187,11 @@ namespace pt::flow {
 
     private:
         ProductionPolicy policy;
+
+        // Node-RED integration members
+        bool noderd_enabled;
+        noderd::NodeREDMetadata noderd_metadata;
+        noderd::MessageEnvelope last_output_envelope;
     };
 
     /**
