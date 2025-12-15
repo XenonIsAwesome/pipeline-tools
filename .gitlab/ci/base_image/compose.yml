@@ -1,0 +1,5 @@
+services:
+  brazil-base-image:
+    image: pipeline-tools/base:${BASE_IMAGE_TAG:-latest}
+    build:
+      context: .

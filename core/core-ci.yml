@@ -1,0 +1,85 @@
+.core_before_script: &core_before_script
+  - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${CI_JOB_TOKEN}
+
+Build CORE:
+  image: pipeline-tools/base:${CI_PIPELINE_ID}
+  needs:
+    - job: Build Base Image
+  tags:
+    - general
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - core/**/*
+        - CMakeLists.txt
+        - .gitlab-ci.yml
+      when: always
+    - when: never
+  stage: build
+  before_script: *core_before_script
+  script:
+    - cmake --build build --target pipeline-tools-core -- -j${NUM_PROCS}
+  variables:
+    NUM_PROCS: 1
+
+Test CORE:
+  image: pipeline-tools/base:${CI_PIPELINE_ID}
+  needs:
+    - job: Build Base Image
+  tags:
+    - general
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - core/**/*
+        - CMakeLists.txt
+        - .gitlab-ci.yml
+      when: always
+    - when: never
+  stage: test
+  before_script: *core_before_script
+  script:
+    - mkdir -p ./out
+    - cmake --build build --target pipeline-tools-core-gtest -- -j${NUM_PROCS}
+    - ./build/core/test/pipeline-tools-core-gtest --gtest_output=xml:./gtest.xml
+  after_script:
+    - apt update
+    - DEBIAN_FRONTEND=noninteractive apt install -y python3
+    - python3 .gitlab/ci/scripts/parse_junit_output.py ./gtest.xml
+  variables:
+    NUM_PROCS: 1
+  artifacts:
+    reports:
+      junit: ./gtest.xml
+
+Benchmark CORE:
+  image: pipeline-tools/base:${CI_PIPELINE_ID}
+  needs:
+    - job: Build Base Image
+  tags:
+    - general
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - core/**/*
+        - CMakeLists.txt
+        - .gitlab-ci.yml
+      when: always
+    - when: never
+  stage: test
+  before_script: *core_before_script
+  script:
+    - cmake --build build --target pipeline-tools-core-benchmark -- -j${NUM_PROCS}
+    - ./build/core/test/pipeline-tools-core-benchmark --benchmark_format=json | tee ./benchmark.json
+  after_script:
+    - apt update
+    - apt install -y python3
+    - python3 .gitlab/ci/scripts/gbenchmark_to_performance_report.py benchmark.json > performance.json
+  variables:
+    NUM_PROCS: 1
+  artifacts:
+    reports:
+      browser_performance: performance.json
+    paths:
+      - benchmark.json
+      - performance.json
