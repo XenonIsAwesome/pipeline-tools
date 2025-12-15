@@ -10,8 +10,10 @@ RUN apt-get update && apt-get install --no-install-recommends -qy \
     libfmt-dev \
     libssl-dev \
     libboost1.74-all-dev \
+    ca-certificates \
     nlohmann-json3-dev && \
-    rm -rf /var/cache/apt/*
+    rm -rf /var/cache/apt/* && \
+    update-ca-certificates
 
 FROM depends AS builder
 
@@ -47,9 +49,9 @@ RUN git clone https://github.com/yhirose/cpp-httplib && \
     cmake --build build --target install -- -j$(nproc) && \
     cd .. && rm -rf cpp-httplib
 
-ARG NSTDLIB_TAG="v1.0"
-RUN git clone https://github.com/mkmagic/nstd_any.git && \
-    cd nstd-any && \
+ARG NSTDLIB_TAG="main"
+RUN git clone https://github.com/XenonIsAwesome/nstd_any.git && \
+    cd nstd_any && \
     git checkout ${NSTDLIB_TAG} && \
     cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build --target install -- -j$(nproc) && \

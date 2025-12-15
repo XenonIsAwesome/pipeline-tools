@@ -27,14 +27,17 @@ endif ()
 find_package(nstd QUIET)
 if (NOT nstd_FOUND)
     include(FetchContent)
-    set(nstd_VERSION_TAG "v1.0" CACHE STRING "Version tag of the nstd dependency")
-    message(STATUS ${nstd_VERSION_TAG})
+    set(nstd_VERSION_TAG "main" CACHE STRING "Version tag of the nstd dependency")
     FetchContent_Declare(
             nstd
-            GIT_REPOSITORY "https://github.com/mkmagic/nstd_any"
+            GIT_REPOSITORY "https://github.com/XenonIsAwesome/nstd_any"
             GIT_TAG ${nstd_VERSION_TAG}
     )
     FetchContent_MakeAvailable(nstd)
+
+    set(NSTD_LINK_TARGET "nstd")
+else()
+    set(NSTD_LINK_TARGET "nstd::nstd")
 endif ()
 
 
@@ -44,7 +47,7 @@ file(GLOB_RECURSE CORE_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 
 add_library(${CORE_LIB_NAME} ${CORE_SRCS})
 target_include_directories(${CORE_LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${CORE_LIB_NAME} PUBLIC ${DAWGLOGGER_LINK_TARGET} SimpleAmqpClient nstd::nstd)
+target_link_libraries(${CORE_LIB_NAME} PUBLIC SimpleAmqpClient ${NSTD_LINK_TARGET})
 
 # Setting up tests
 option(PIPELINE_TOOLS_ENABLE_TESTS "Enable building unit‑tests for ${CORE_LIB_NAME}" OFF)
