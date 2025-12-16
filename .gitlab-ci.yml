@@ -15,9 +15,7 @@ Build Base Image:
       when: always
     - when: never
   script:
-    - docker build -t pipeline-tools/base:${CI_PIPELINE_ID}
-        --build-arg GITLAB_USER=gitlab-ci-token 
-        --build-arg GITLAB_PAT=${CI_JOB_TOKEN} .gitlab/ci/base_image
+    - docker build -t pipeline-tools/base:${CI_PIPELINE_ID} .gitlab/ci/base_image
 
 
 Test Running Main Executable:
