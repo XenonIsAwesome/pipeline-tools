@@ -16,7 +16,7 @@ if (NOT httplib_FOUND)
     FetchContent_MakeAvailable(httplib)
 endif()
 
-target_link_libraries(${SERVER_LIB_NAME} PUBLIC nlohmann_json::nlohmann_json httplib::httplib ${DAWGLOGGER_LINK_TARGET} ${CORE_LIB_NAME})
+target_link_libraries(${SERVER_LIB_NAME} PUBLIC nlohmann_json::nlohmann_json httplib::httplib pipeline-tools-core ${DAWGLOGGER_LINK_TARGET})
 
 set(SWAGGER_JSON_PATH "${CMAKE_BINARY_DIR}/swagger.json")
 target_compile_definitions(${SERVER_LIB_NAME} PUBLIC SWAGGER_JSON_PATH="${SWAGGER_JSON_PATH}")
