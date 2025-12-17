@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install --no-install-recommends -qy \
     gcc \
     g++ \
     libgtest-dev \
+    libbenchmark-dev \
     libfmt-dev \
     libssl-dev \
     libboost1.74-all-dev \
