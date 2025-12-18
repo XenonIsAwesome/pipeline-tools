@@ -23,7 +23,7 @@ jobs:
         id: meta
         run: |
           OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}
-          IMAGE=ghcr.io/${OWNER_LC}/project-name/base:${{ github.run_id }}
+          IMAGE=ghcr.io/${OWNER_LC}/pipeline-tools/base:ci-${{ github.run_id }}
           echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
