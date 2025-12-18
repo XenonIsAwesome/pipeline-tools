@@ -83,10 +83,10 @@ def main():
     args = parser.parse_args()
 
     # Step 1: Run gcov to generate reports from data files
-    run_gcov(args.search_dir)
+    run_gcov(args.build_dir)
     
     # Step 2: Parse the generated .gcov files
-    stats = parse_gcov_files(args.search_dir)
+    stats = parse_gcov_files(args.build_dir)
     
     if not stats:
         print("No coverage data found. Ensure you built with ENABLE_COVERAGE=ON and ran the tests.")
