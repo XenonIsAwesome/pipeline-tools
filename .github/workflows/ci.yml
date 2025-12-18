@@ -3,6 +3,7 @@ name: CI
 permissions:
   contents: read
   packages: write
+  checks: write
 
 on:
   push:
@@ -137,10 +138,10 @@ jobs:
       - name: Parse junit output
         run: |
           python3 .gitlab/ci/scripts/parse_junit_output.py ./gtest.xml || true
-      - name: Upload gtest.xml
-        uses: actions/upload-artifact@v4
+      - name: Upload test report to GitHub
+        uses: actions/upload-test-report@v1
         with:
-          name: gtest-xml
+          report: junit
           path: ./gtest.xml
 
   benchmark-core:
