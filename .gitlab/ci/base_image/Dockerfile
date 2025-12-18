@@ -56,6 +56,6 @@ RUN git clone https://github.com/XenonIsAwesome/nstd_any.git && \
     git checkout ${NSTDLIB_TAG} && \
     cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build --target install -- -j$(nproc) && \
-    cd .. && rm -rf nstd-any
+    cd .. && rm -rf nstd_any
 
 RUN ldconfig
