@@ -4,6 +4,8 @@ set(CORE_LIB_NAME ${PROJECT_NAME}-core)
 # ----------------------------------- ## GOOGLETEST ## -----------------------------------
 # ----------------------------------- ################ -----------------------------------
 
+include(GoogleTest)
+
 find_package(GTest QUIET)
 if (NOT GTest_FOUND)
     include(FetchContent)
@@ -25,6 +27,7 @@ file(GLOB_RECURSE GTEST_SOURCES
 
 add_executable(${CORE_LIB_NAME}-gtest ${GTEST_SOURCES})
 target_link_libraries(${CORE_LIB_NAME}-gtest PRIVATE ${CORE_LIB_NAME} gtest)
+gtest_discover_tests(${CORE_LIB_NAME}-gtest)
 
 # ----------------------------------- ############### -----------------------------------
 # ----------------------------------- ## BENCHMARK ## -----------------------------------
