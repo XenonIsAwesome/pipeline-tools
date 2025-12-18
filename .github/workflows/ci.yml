@@ -1,5 +1,9 @@
 name: CI
 
+permissions:
+  contents: read
+  packages: write
+
 on:
   push:
     branches: [ master, dev ]
@@ -15,11 +19,23 @@ jobs:
       - name: Build base image
         run: |
           docker build -t pipeline-tools/base:${{ github.run_id }} .gitlab/ci/base_image
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag and push base image to GHCR
+        run: |
+          docker tag pipeline-tools/base:${{ github.run_id }} ghcr.io/${{ github.repository_owner }}/pipeline-tools/base:${{ github.run_id }}
+          docker push ghcr.io/${{ github.repository_owner }}/pipeline-tools/base:${{ github.run_id }}
 
   test-running-main-executable:
     name: Test Running Main Executable
     runs-on: ubuntu-latest
     needs: build-base-image
+    container:
+      image: ghcr.io/${{ github.repository_owner }}/pipeline-tools/base:${{ github.run_id }}
     if: github.event_name == 'pull_request'
     env:
       NUM_PROCS: 1
@@ -76,6 +92,8 @@ jobs:
     name: Build CORE
     runs-on: ubuntu-latest
     needs: [ build-base-image, filter-core-changes ]
+    container:
+      image: ghcr.io/${{ github.repository_owner }}/pipeline-tools/base:${{ github.run_id }}
     if: github.event_name == 'pull_request' && needs.filter-core-changes.outputs.core == 'true'
     env:
       NUM_PROCS: 1
@@ -92,6 +110,8 @@ jobs:
     name: Test CORE
     runs-on: ubuntu-latest
     needs: [ build-base-image, filter-core-changes ]
+    container:
+      image: ghcr.io/${{ github.repository_owner }}/pipeline-tools/base:${{ github.run_id }}
     if: github.event_name == 'pull_request' && needs.filter-core-changes.outputs.core == 'true'
     env:
       NUM_PROCS: 1
@@ -122,6 +142,8 @@ jobs:
     name: Benchmark CORE
     runs-on: ubuntu-latest
     needs: [ build-base-image, filter-core-changes ]
+    container:
+      image: ghcr.io/${{ github.repository_owner }}/pipeline-tools/base:${{ github.run_id }}
     if: github.event_name == 'pull_request' && needs.filter-core-changes.outputs.core == 'true'
     env:
       NUM_PROCS: 1
