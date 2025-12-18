@@ -107,7 +107,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Core before script
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${{ secrets.GITHUB_TOKEN }}
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON
       - name: Build core target
         run: |
           cmake --build build --target pipeline-tools-core -- -j${NUM_PROCS}
@@ -125,7 +125,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Core before script
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${{ secrets.GITHUB_TOKEN }}
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON
       - name: Build and run gtests
         run: |
           mkdir -p ./out
@@ -157,7 +157,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Core before script
         run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${{ secrets.GITHUB_TOKEN }}
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON
       - name: Run benchmarks
         run: |
           cmake --build build --target pipeline-tools-core-benchmark -- -j${NUM_PROCS}
