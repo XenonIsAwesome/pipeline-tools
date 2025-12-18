@@ -2,6 +2,7 @@ import os
 import subprocess
 import glob
 import argparse
+from pathlib import Path
 
 def run_gcov(search_dir):
     # Find all .gcda files
@@ -73,7 +74,12 @@ def parse_gcov_files(search_dir):
 
 def main():
     parser = argparse.ArgumentParser(description="Mock SonarQube Coverage Parser")
-    parser.add_argument("--search-dir", default="build", help="Directory to search for .gcda and .gcov files")
+    parser.add_argument("--build-dir", default="build", help="Directory to search for .gcda and .gcov files")
+    parser.add_argument("--silent", action="store_true")
+
+    # TODO: Currently not used...
+    parser.add_argument("--source-dir", default=Path(), help="Directory to filter coverage for")
+
     args = parser.parse_args()
 
     # Step 1: Run gcov to generate reports from data files
@@ -84,6 +90,9 @@ def main():
     
     if not stats:
         print("No coverage data found. Ensure you built with ENABLE_COVERAGE=ON and ran the tests.")
+        return
+
+    if args.silent:
         return
 
     print("\n--- Coverage Summary (Mock SonarQube) ---")
