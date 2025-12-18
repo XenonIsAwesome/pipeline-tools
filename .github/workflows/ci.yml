@@ -14,30 +14,33 @@ jobs:
   build-base-image:
     name: Build Base Image
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
     steps:
       - uses: actions/checkout@v4
-      - name: Lowercase owner
+      - name: Compute image name
+        id: meta
         run: |
-          echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
-      - name: Build base image
-        run: |
-          docker build -t ghcr.io/${OWNER_LC}/pipeline-tools/base:${{ github.run_id }} .gitlab/ci/base_image
+          OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}
+          IMAGE=ghcr.io/${OWNER_LC}/project-name/base:${{ github.run_id }}
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Tag and push base image to GHCR
+      - name: Build & push
         run: |
-          docker push ghcr.io/${OWNER_LC}/pipeline-tools/base:${{ github.run_id }}
+          docker build -t "${{ steps.meta.outputs.image }}" .gitlab/ci/base_image
+          docker push "${{ steps.meta.outputs.image }}"
 
   test-running-main-executable:
     name: Test Running Main Executable
     runs-on: ubuntu-latest
     needs: build-base-image
     container:
-      image: pipeline-tools/base:${{ github.run_id }}
+      image: ${{ needs.build-base-image.outputs.image }}
     if: github.event_name == 'pull_request'
     env:
       NUM_PROCS: 1
@@ -95,12 +98,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ build-base-image, filter-core-changes ]
     container:
-      image: ghcr.io/${OWNER_LC}/pipeline-tools/base:${{ github.run_id }}
+      image: ${{ needs.build-base-image.outputs.image }}
     if: github.event_name == 'pull_request' && needs.filter-core-changes.outputs.core == 'true'
     env:
       NUM_PROCS: 1
     steps:
       - uses: actions/checkout@v4
+      - name: Lowercase owner
+        run: |
+          echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
       - name: Core before script
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${{ secrets.GITHUB_TOKEN }}
@@ -113,7 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ build-base-image, filter-core-changes ]
     container:
-      image: ghcr.io/${OWNER_LC}/pipeline-tools/base:${{ github.run_id }}
+      image: ${{ needs.build-base-image.outputs.image }}
     if: github.event_name == 'pull_request' && needs.filter-core-changes.outputs.core == 'true'
     env:
       NUM_PROCS: 1
@@ -145,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ build-base-image, filter-core-changes ]
     container:
-      image: ghcr.io/${OWNER_LC}/pipeline-tools/base:${{ github.run_id }}
+      image: ${{ needs.build-base-image.outputs.image }}
     if: github.event_name == 'pull_request' && needs.filter-core-changes.outputs.core == 'true'
     env:
       NUM_PROCS: 1
