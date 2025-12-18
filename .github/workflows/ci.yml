@@ -49,8 +49,8 @@ jobs:
       - name: Configure build
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release
-          sudo apt update
-          sudo apt install -y curl
+          apt update
+          apt install -y curl
           cmake --build build --target pipeline-tools -- -j${NUM_PROCS}
       - name: Run server and test
         run: |
@@ -104,9 +104,6 @@ jobs:
       NUM_PROCS: 1
     steps:
       - uses: actions/checkout@v4
-      - name: Lowercase owner
-        run: |
-          echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
       - name: Core before script
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${{ secrets.GITHUB_TOKEN }}
@@ -135,8 +132,8 @@ jobs:
           ./build/core/test/pipeline-tools-core-gtest --gtest_output=xml:./gtest.xml || true
       - name: Install python
         run: |
-          sudo apt update
-          sudo DEBIAN_FRONTEND=noninteractive apt install -y python3
+          apt-get update
+          apt-get install -y python3
       - name: Parse junit output
         run: |
           python3 .gitlab/ci/scripts/parse_junit_output.py ./gtest.xml || true
@@ -166,8 +163,8 @@ jobs:
           ./build/core/test/pipeline-tools-core-benchmark --benchmark_format=json | tee ./benchmark.json
       - name: Install python
         run: |
-          sudo apt update
-          sudo apt install -y python3
+          apt-get update
+          apt-get install -y python3
       - name: Generate performance report
         run: |
           python3 .gitlab/ci/scripts/gbenchmark_to_performance_report.py benchmark.json > performance.json || true
