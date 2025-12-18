@@ -3,11 +3,6 @@ name: CI
 permissions:
   contents: read
   packages: write
-name: CI
-
-permissions:
-  contents: read
-  packages: write
 
 on:
   push:
