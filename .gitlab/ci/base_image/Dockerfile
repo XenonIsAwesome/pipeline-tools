@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install --no-install-recommends -qy \
     gcc \
     g++ \
     libgtest-dev \
+    libbenchmark-dev \
     libfmt-dev \
     libssl-dev \
     libboost1.74-all-dev \
@@ -17,13 +18,13 @@ RUN apt-get update && apt-get install --no-install-recommends -qy \
 
 FROM depends AS builder
 
-#ARG DAWGLOG_TAG="v1.1"
-#RUN git clone "${DAWGLOG_PATH}/dawg-logger.git" && \
-#    cd dawg-logger && \
-#    git checkout ${DAWGLOG_TAG} && \
-#    cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
-#    cmake --build build --target install -- -j$(nproc) && \
-#    cd .. && rm -rf dawg-logger
+ARG DAWGLOG_TAG="main"
+RUN git clone "https://github.com/eyaljoseph/dawg-logger.git" && \
+    cd dawg-logger && \
+    git checkout ${DAWGLOG_TAG} && \
+    cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build --target install -- -j$(nproc) && \
+    cd .. && rm -rf dawg-logger
 
 ARG RABBITMQ_C_TAG="master"
 RUN git clone https://github.com/alanxz/rabbitmq-c.git && \

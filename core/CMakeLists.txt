@@ -34,10 +34,6 @@ if (NOT nstd_FOUND)
             GIT_TAG ${nstd_VERSION_TAG}
     )
     FetchContent_MakeAvailable(nstd)
-
-    set(NSTD_LINK_TARGET "nstd")
-else()
-    set(NSTD_LINK_TARGET "nstd::nstd")
 endif ()
 
 
@@ -47,7 +43,7 @@ file(GLOB_RECURSE CORE_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 
 add_library(${CORE_LIB_NAME} ${CORE_SRCS})
 target_include_directories(${CORE_LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-target_link_libraries(${CORE_LIB_NAME} PUBLIC SimpleAmqpClient ${NSTD_LINK_TARGET})
+target_link_libraries(${CORE_LIB_NAME} PUBLIC SimpleAmqpClient ${NSTD_LINK_TARGET} ${DAWGLOGGER_LINK_TARGET})
 
 # Setting up tests
 option(PIPELINE_TOOLS_ENABLE_TESTS "Enable building unit‑tests for ${CORE_LIB_NAME}" OFF)

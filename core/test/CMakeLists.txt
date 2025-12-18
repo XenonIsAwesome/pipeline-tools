@@ -9,7 +9,7 @@ if (NOT GTest_FOUND)
     include(FetchContent)
     FetchContent_Declare(
             googletest
-            GIT_REPOSITORY "${GITLAB_PATH}/nahshol/internet/googletest.git"
+            GIT_REPOSITORY "https://github.com/google/googletest.git"
             GIT_TAG main
     )
 
@@ -35,7 +35,7 @@ if (NOT benchmark_FOUND)
     include(FetchContent)
     FetchContent_Declare(
             benchmark
-            GIT_REPOSITORY "${GITLAB_PATH}/nahshol/internet/benchmark.git"
+            GIT_REPOSITORY "https://github.com/google/benchmark.git"
             GIT_TAG main
     )
 
