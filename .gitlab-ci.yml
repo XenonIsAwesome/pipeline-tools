@@ -16,6 +16,8 @@ Build Base Image:
       when: always
     - when: never
   script:
+    - echo $CI_REGISTRY
+    - echo $CI_REGISTRY_USER
     - docker build -t ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID} .gitlab/ci/base_image
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
     - docker push ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID}
