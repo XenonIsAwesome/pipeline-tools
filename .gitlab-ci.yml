@@ -17,7 +17,7 @@ Build Base Image:
     - when: never
   script:
     - docker build -t ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID} .gitlab/ci/base_image
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
     - docker push ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID}
 
 
@@ -55,3 +55,18 @@ Build Docs:
     - when: never
   script:
     - docker build -f docs/Dockerfile -t ${CI_REGISTRY}/pipeline-tools/docs:latest .
+
+Coverage Report:
+  image: ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID}
+  needs:
+    - job: Build Base Image
+  variables:
+    NUM_PROCS: 1
+  before_script:
+    - apt-get update
+    - apt-get install -y python3
+  script:
+    - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DENABLE_COVERAGE=ON
+    - cmake --build build --target all -- -j${NUM_PROCS}
+    - ctest --test-dir build --extra-verbose
+    - python3 -m dev_tools.scripts.mock_sonar_coverage
