@@ -8,8 +8,6 @@ include:
 
 Build Base Image:
   stage: Preflight
-  tags:
-    - general
   rules:
     - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
       when: always
@@ -22,8 +20,6 @@ Test Running Main Executable:
   image: pipeline-tools/base:${CI_PIPELINE_ID}
   needs:
     - job: Build Base Image
-  tags:
-    - general
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: always
@@ -45,8 +41,6 @@ Test Running Main Executable:
 
 Build Docs:
   stage: build
-  tags:
-    - general
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
       when: always
