@@ -7,8 +7,9 @@ include:
   - local: core/core-ci.yml
 
 Build Base Image:
-  image: docker:latest
-  stage: Preflight
+  image: docker:27
+  services:
+    - docker:27-dind  stage: Preflight
   rules:
     - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
       when: always
@@ -43,6 +44,9 @@ Test Running Main Executable:
     NUM_PROCS: 1
 
 Build Docs:
+  image: docker:27
+  services:
+    - docker:27-dind
   stage: build
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
@@ -50,6 +54,3 @@ Build Docs:
     - when: never
   script:
     - docker build -f docs/Dockerfile -t ${CI_REGISTRY}/pipeline-tools/docs:latest .
-    - docker tag ${CI_REGISTRY}/pipeline-tools/docs:latest ${CI_REGISTRY}/pipeline-tools/docs:${CI_COMMIT_BRANCH}
-    - docker push ${CI_REGISTRY}/pipeline-tools/docs:latest
-    - docker push ${CI_REGISTRY}/pipeline-tools/docs:${CI_COMMIT_BRANCH}
