@@ -7,23 +7,25 @@ include:
   - local: core/core-ci.yml
 
 Build Base Image:
+  image: docker:27
+  services:
+    - docker:27-dind
   stage: Preflight
-  tags:
-    - general
   rules:
     - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
       when: always
     - when: never
   script:
-    - docker build -t pipeline-tools/base:${CI_PIPELINE_ID} .gitlab/ci/base_image
-
+    - echo $CI_REGISTRY
+    - echo $CI_REGISTRY_USER
+    - docker build -t ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID} .gitlab/ci/base_image
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker push ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
 
 Test Running Main Executable:
-  image: pipeline-tools/base:${CI_PIPELINE_ID}
+  image: ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
   needs:
     - job: Build Base Image
-  tags:
-    - general
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: always
@@ -44,13 +46,32 @@ Test Running Main Executable:
     NUM_PROCS: 1
 
 Build Docs:
+  image: docker:27
+  services:
+    - docker:27-dind
   stage: build
-  tags:
-    - general
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
       when: always
     - when: never
   script:
-    - docker build -f docs/Dockerfile -t pipeline-tools/docs:latest .
-    - docker tag pipeline-tools/docs:latest pipeline-tools/docs:${CI_COMMIT_BRANCH}
+    - docker build -f docs/Dockerfile -t ${CI_REGISTRY}/pipeline-tools/docs:latest .
+
+Coverage Report:
+  image: ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
+  needs:
+    - job: Build Base Image
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
+      when: always
+    - when: never
+  variables:
+    NUM_PROCS: 1
+  before_script:
+    - apt-get update
+    - apt-get install -y python3
+  script:
+    - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DENABLE_COVERAGE=ON
+    - cmake --build build --target all -- -j${NUM_PROCS}
+    - ctest --test-dir build --extra-verbose
+    - python3 -m dev_tools.scripts.mock_sonar_coverage

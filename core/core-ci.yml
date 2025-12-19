@@ -2,11 +2,9 @@
   - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${CI_JOB_TOKEN}
 
 Build CORE:
-  image: pipeline-tools/base:${CI_PIPELINE_ID}
+  image: ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
   needs:
     - job: Build Base Image
-  tags:
-    - general
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes:
@@ -23,11 +21,9 @@ Build CORE:
     NUM_PROCS: 1
 
 Test CORE:
-  image: pipeline-tools/base:${CI_PIPELINE_ID}
+  image: ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
   needs:
     - job: Build Base Image
-  tags:
-    - general
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes:
@@ -53,11 +49,9 @@ Test CORE:
       junit: ./gtest.xml
 
 Benchmark CORE:
-  image: pipeline-tools/base:${CI_PIPELINE_ID}
+  image: ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
   needs:
     - job: Build Base Image
-  tags:
-    - general
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes:
