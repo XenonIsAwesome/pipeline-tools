@@ -7,17 +7,20 @@ include:
   - local: core/core-ci.yml
 
 Build Base Image:
+  image: docker:latest
   stage: Preflight
   rules:
     - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
       when: always
     - when: never
   script:
-    - docker build -t pipeline-tools/base:${CI_PIPELINE_ID} .gitlab/ci/base_image
+    - docker build -t ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID} .gitlab/ci/base_image
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID}
 
 
 Test Running Main Executable:
-  image: pipeline-tools/base:${CI_PIPELINE_ID}
+  image: ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID}
   needs:
     - job: Build Base Image
   rules:
@@ -46,5 +49,7 @@ Build Docs:
       when: always
     - when: never
   script:
-    - docker build -f docs/Dockerfile -t pipeline-tools/docs:latest .
-    - docker tag pipeline-tools/docs:latest pipeline-tools/docs:${CI_COMMIT_BRANCH}
+    - docker build -f docs/Dockerfile -t ${CI_REGISTRY}/pipeline-tools/docs:latest .
+    - docker tag ${CI_REGISTRY}/pipeline-tools/docs:latest ${CI_REGISTRY}/pipeline-tools/docs:${CI_COMMIT_BRANCH}
+    - docker push ${CI_REGISTRY}/pipeline-tools/docs:latest
+    - docker push ${CI_REGISTRY}/pipeline-tools/docs:${CI_COMMIT_BRANCH}
