@@ -20,6 +20,7 @@ def run_gcov(search_dir):
         cwd = os.path.dirname(gcda)
         subprocess.run(["gcov", "-p", "-l", os.path.basename(gcda)], cwd=cwd, capture_output=True)
 
+
 def parse_gcov_files(search_dir):
     gcov_files = glob.glob(os.path.join(search_dir, "**/*.gcov"), recursive=True)
     if not gcov_files:
@@ -72,13 +73,14 @@ def parse_gcov_files(search_dir):
 
     return stats
 
+
 def main():
     parser = argparse.ArgumentParser(description="Mock SonarQube Coverage Parser")
-    parser.add_argument("--build-dir", default="build", help="Directory to search for .gcda and .gcov files")
+    parser.add_argument("--build-dir", type=Path, default=Path.cwd() / "build",
+                        help="Directory to search for .gcda and .gcov files")
+    parser.add_argument("--source-dir", type=Path, default=Path.cwd(),
+                        help="Directory to filter coverage for")
     parser.add_argument("--silent", action="store_true")
-
-    # TODO: Currently not used...
-    parser.add_argument("--source-dir", default=Path(), help="Directory to filter coverage for")
 
     args = parser.parse_args()
 
@@ -105,6 +107,11 @@ def main():
     # Clean up paths to make them more readable (relative to project root if possible)
     # We'll just show the tail if it's too long
     for source in sorted(stats.keys()):
+        # Filtering to only include sources from the source dir (and not the build dir)
+        source_path = Path(source)
+        if not source_path.is_relative_to(args.source_dir) or source_path.is_relative_to(args.build_dir):
+            continue
+
         hits, lines = stats[source]
         percentage = (hits / lines) * 100
         
