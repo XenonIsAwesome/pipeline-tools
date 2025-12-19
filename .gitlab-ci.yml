@@ -22,7 +22,6 @@ Build Base Image:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
     - docker push ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID}
 
-
 Test Running Main Executable:
   image: ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID}
   needs:
@@ -62,6 +61,10 @@ Coverage Report:
   image: ${CI_REGISTRY}/pipeline-tools/base:${CI_PIPELINE_ID}
   needs:
     - job: Build Base Image
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
+      when: always
+    - when: never
   variables:
     NUM_PROCS: 1
   before_script:
