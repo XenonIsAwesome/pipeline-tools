@@ -9,7 +9,8 @@ include:
 Build Base Image:
   image: docker:27
   services:
-    - docker:27-dind  stage: Preflight
+    - docker:27-dind
+  stage: Preflight
   rules:
     - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
       when: always
