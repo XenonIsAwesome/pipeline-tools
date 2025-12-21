@@ -3,6 +3,32 @@ import subprocess
 import glob
 import argparse
 from pathlib import Path
+from typing import List, Optional
+
+
+def parse_sonarqube_properties(sonar_props: Path) -> dict:
+    parsed = {}
+
+    fields = sonar_props.read_text().split("\n")
+    for field in fields:
+        if "=" not in field:
+            continue
+        key, value = field.split("=", maxsplit=1)
+        values = [v.strip() for v in value.split(",")]
+
+        parsed[key] = values
+
+    return parsed
+
+
+def is_excluded_by_sonarqube(sonar_props: dict, source: Path) -> bool:
+    exclusions: Optional[List[str]] = sonar_props.get("sonar.exclusions")
+    if exclusions is None:
+        return False
+
+    p = str(source)
+    return any(p in glob.glob(pattern, recursive=True) for pattern in exclusions)
+
 
 def run_gcov(search_dir):
     # Find all .gcda files
@@ -76,6 +102,8 @@ def parse_gcov_files(search_dir):
 
 def main():
     parser = argparse.ArgumentParser(description="Mock SonarQube Coverage Parser")
+    parser.add_argument("--sonar-props", type=Path, default=Path.cwd() / "sonar-project.properties",
+                        help="Path to sonar properties")
     parser.add_argument("--build-dir", type=Path, default=Path.cwd() / "build",
                         help="Directory to search for .gcda and .gcov files")
     parser.add_argument("--source-dir", type=Path, default=Path.cwd(),
@@ -107,9 +135,19 @@ def main():
     # Clean up paths to make them more readable (relative to project root if possible)
     # We'll just show the tail if it's too long
     for source in sorted(stats.keys()):
-        # Filtering to only include sources from the source dir (and not the build dir)
         source_path = Path(source)
-        if not source_path.is_relative_to(args.source_dir) or source_path.is_relative_to(args.build_dir):
+        if not source_path.is_relative_to(args.source_dir):
+            continue
+
+        if source_path.is_relative_to(args.build_dir):
+            continue
+
+        sonarqube_props_path = args.sonar_props
+        if sonarqube_props_path.is_dir():
+            sonarqube_props_path = sonarqube_props_path / "sonar-project.properties"
+
+        rel_source = source_path.relative_to(args.source_dir)
+        if is_excluded_by_sonarqube(parse_sonarqube_properties(sonarqube_props_path), rel_source):
             continue
 
         hits, lines = stats[source]
