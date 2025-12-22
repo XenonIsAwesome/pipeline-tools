@@ -1,5 +1,8 @@
 name: Deploy Doxygen to GitHub Pages
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ main, add-doxygen-gh-pages-workflow ]
