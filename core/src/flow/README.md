@@ -18,6 +18,8 @@ To simplify development, several specialized "blocks" are provided:
 - **Aggregator**: A unit that collects inputs from multiple producers and processes them once all have arrived.
 - **Sink**: An endpoint of a pipeline that consumes data without producing output.
 
+> Note: A Node is a name for a flow block that's connected from both sides (Modules and Aggregators are Nodes)
+
 ### Typed Interface
 While the internal engine uses type-erasure, the framework provides typed base classes (`Source<Out>`, `Module<In, Out>`, `Aggregator<In, Out>`, `Sink<In>`) to ensure type safety at the user level.
 
