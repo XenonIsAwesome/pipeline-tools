@@ -1,13 +1,64 @@
-cmake_minimum_required(VERSION 3.14)
-project(pt)
+cmake_minimum_required(VERSION 3.20)
+project(pipeline-tools LANGUAGES CXX)
+
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(MAIN_EXEC_NAME ${PROJECT_NAME}-example)
-set(CORE_LIB_NAME ${PROJECT_NAME}-core)
+option(ENABLE_COVERAGE "Enable code coverage reporting" OFF)
+if(ENABLE_COVERAGE)
+    include(CTest)
 
-# Library setup
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/pipeline_tools")
+    message(STATUS "Build with coverage instrumentation")
+    add_compile_options(--coverage -O0)
+    add_link_options(--coverage)
+endif()
 
-# Main executable
-add_executable(${MAIN_EXEC_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
-target_link_libraries(${MAIN_EXEC_NAME} ${CORE_LIB_NAME})
+# ------------------------------ ######################### ------------------------------
+# ------------------------------ ## Common dependencies ## ------------------------------
+# ------------------------------ ######################### ------------------------------
+find_package(fmt REQUIRED)
+
+find_package(nlohmann_json QUIET)
+if (NOT nlohmann_json_FOUND)
+    FetchContent_Declare(
+            json
+            GIT_REPOSITORY "https://github.com/nlohmann/json.git"
+            GIT_TAG v3.11.2
+    )
+    FetchContent_MakeAvailable(json)
+endif ()
+
+find_package(dawg-logger QUIET)
+if (NOT dawg-logger_FOUND)
+    set(DAWGLOGGER_VERSION_TAG "main" CACHE STRING "DawgLogger version tag")
+    include(FetchContent)
+    FetchContent_Declare(
+            dawg-logger
+            GIT_REPOSITORY "https://github.com/eyaljoseph/dawg-logger.git"
+            GIT_TAG ${DAWGLOGGER_VERSION_TAG}
+    )
+    FetchContent_MakeAvailable(dawg-logger)
+    set(DAWGLOGGER_LINK_TARGET dawg-logger)
+else()
+    set(DAWGLOGGER_LINK_TARGET DawgLog::dawg-logger)
+endif ()
+
+# ------------------------------ ########################## ------------------------------
+# ------------------------------ ## Setting up libraries ## ------------------------------
+# ------------------------------ ########################## ------------------------------
+add_subdirectory(core)
+add_subdirectory(server)
+add_subdirectory(missions)
+
+# ------------------------------ ##################### ------------------------------
+# ------------------------------ ## Main executable ## ------------------------------
+# ------------------------------ ##################### ------------------------------
+add_executable(${PROJECT_NAME} main.cpp)
+
+# TODO: make this automatically populate by adding sub-directories
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        -Wl,--whole-archive
+        mission-example
+
+        -Wl,--no-whole-archive
+        pipeline-tools-server pipeline-tools-core)

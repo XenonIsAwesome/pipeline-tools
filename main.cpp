@@ -1,33 +1,31 @@
-#include <utils/queues/LockFreeQueue.hpp>
-#include <utils/threads/CPUManager.h>
+#include <config/config.h>
+#include <server/routes.hpp>
+#include <utils/logging/logger.h>
 
-
-#include <iostream>
-#include <utils/threads/Worker.h>
+namespace swg = pt::server::swagger;
 
 int main() {
-    pt::threads::Worker wa({.cores = 2, .affinity_type = pt::threads::AffinityType::PINNED}, [](std::atomic_flag& flag) {
-        while (flag.test()) {
-            std::cout << "A" << std::endl;
-        }
-    });
+    pt::utils::logging::initialize_dawglogger();
 
-    pt::threads::Worker wb({.cores = 2, .affinity_type = pt::threads::AffinityType::NORMAL}, [](std::atomic_flag& flag) {
-        while (flag.test()) {
-            std::cout << "B" << std::endl;
-        }
-    });
+    auto registry = pt::server::EndpointRegistry::getInstance();
 
-    pt::threads::CPUManager::getInstance()->print_cores();
+    [[maybe_unused]] static pt::server::RegisterEndpoint _register_main(
+        [](httplib::Server& svr) {
+            DECLARE_ENDPOINT(
+                svr,
+                Get,
+                "/",
+                swg::EndpointMetadata("System Status").add_response(httplib::OK_200, "OK"),
+                [](const httplib::Request& req, httplib::Response& res) {
+                    res.status = httplib::OK_200;
+                    res.set_content("true", "application/json");
+                })
+        });
 
-    wa.start();
-    wb.start();
+    const auto host = pt::config::get("PT_API_HOST", "0.0.0.0");
+    const auto port = pt::config::get("PT_API_HOST", 8081);
 
-    pt::threads::CPUManager::getInstance()->print_cores();
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    registry->start(host, port);
 
-    wa.stop();
-    wb.stop();
-
-    pt::threads::CPUManager::getInstance()->print_cores();
+    return 0;
 }

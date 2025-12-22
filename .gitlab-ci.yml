@@ -1,41 +1,77 @@
 stages:
+  - Preflight
   - build
   - test
 
-variables:
-  BUILD_DIR: build
+include:
+  - local: core/core-ci.yml
 
-before_script:
-  - cmake -B $BUILD_DIR -DCMAKE_BUILD_TYPE=Release
-
-Build All:
-  stage: build
-  script:
-    - cmake --build $BUILD_DIR --target all
-
-Test GTest:
-  stage: test
-  script:
-    - cmake --build $BUILD_DIR --target pt-core-gtest
-    - ./$BUILD_DIR/pipeline_tools/test/pt-core-gtest
-  needs:
-    - Build All
-
-Test Benchmark:
-  stage: test
-  script:
-    - cmake --build $BUILD_DIR --target pt-core-benchmark
-    - mkdir -p ./out
-    - ./$BUILD_DIR/pipeline_tools/test/pt-core-benchmark | tee ./out/benchmark.log
-  needs:
-    - Build All
-  artifacts:
-    paths:
-      - out/
-
-# Only run on main branch, merge requests, and tags
-workflow:
+Build Base Image:
+  image: docker:27
+  services:
+    - docker:27-dind
+  stage: Preflight
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_TAG
+    - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
+      when: always
+    - when: never
+  script:
+    - echo $CI_REGISTRY
+    - echo $CI_REGISTRY_USER
+    - docker build -t ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID} .gitlab/ci/base_image
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker push ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
+
+Test Running Main Executable:
+  image: ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
+  needs:
+    - job: Build Base Image
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - when: never
+  stage: test
+  before_script:
+    - cmake -B build -DCMAKE_BUILD_TYPE=Release
+    - apt update
+    - apt install -y curl
+    - cmake --build build --target pipeline-tools -- -j${NUM_PROCS}
+  script:
+    - ./build/pipeline-tools &
+    - SERVER_PID=$!
+    - sleep 2
+    - RESPONSE=$(curl -s http://localhost:8081/)
+    - test "$RESPONSE" = "true"
+  variables:
+    NUM_PROCS: 1
+
+Build Docs:
+  image: docker:27
+  services:
+    - docker:27-dind
+  stage: build
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
+      when: always
+    - when: never
+  script:
+    - docker build -f docs/Dockerfile -t ${CI_REGISTRY}/pipeline-tools/docs:latest .
+
+Coverage Report:
+  image: ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}
+  needs:
+    - job: Build Base Image
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID || $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"'
+      when: always
+    - when: never
+  variables:
+    NUM_PROCS: 1
+  before_script:
+    - apt-get update
+    - apt-get install -y python3
+  script:
+    - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DENABLE_COVERAGE=ON
+    - cmake --build build --target all -- -j${NUM_PROCS}
+    - ctest --test-dir build --extra-verbose
+    - python3 -m dev_tools.scripts.mock_sonar_coverage

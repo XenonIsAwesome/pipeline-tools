@@ -1,0 +1,61 @@
+FROM ubuntu:noble AS depends
+
+RUN apt-get update && apt-get install --no-install-recommends -qy \
+    git \
+    cmake \
+    make \
+    gcc \
+    g++ \
+    libgtest-dev \
+    libbenchmark-dev \
+    libfmt-dev \
+    libssl-dev \
+    libboost1.74-all-dev \
+    ca-certificates \
+    nlohmann-json3-dev && \
+    rm -rf /var/cache/apt/* && \
+    update-ca-certificates
+
+FROM depends AS builder
+
+ARG DAWGLOG_TAG="main"
+RUN git clone "https://github.com/eyaljoseph/dawg-logger.git" && \
+    cd dawg-logger && \
+    git checkout ${DAWGLOG_TAG} && \
+    cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build --target install -- -j$(nproc) && \
+    cd .. && rm -rf dawg-logger
+
+ARG RABBITMQ_C_TAG="master"
+RUN git clone https://github.com/alanxz/rabbitmq-c.git && \
+    cd rabbitmq-c && \
+    git checkout ${RABBITMQ_C_TAG} && \
+    cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build --target install -- -j$(nproc) && \
+    cd .. && rm -rf rabbitmq-c
+
+ARG SIMPLE_AMQP_CLIENT_TAG="master"
+RUN git clone https://github.com/alanxz/SimpleAmqpClient.git && \
+    cd SimpleAmqpClient && \
+    git checkout ${SIMPLE_AMQP_CLIENT_TAG} && \
+    cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build --target install -- -j$(nproc) && \
+    cd .. && rm -rf SimpleAmqpClient
+
+ARG CPP_HTTPLIB_TAG="v0.26.0"
+RUN git clone https://github.com/yhirose/cpp-httplib && \
+    cd cpp-httplib && \
+    git checkout ${CPP_HTTPLIB_TAG} && \
+    cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build --target install -- -j$(nproc) && \
+    cd .. && rm -rf cpp-httplib
+
+ARG NSTDLIB_TAG="main"
+RUN git clone https://github.com/XenonIsAwesome/nstd_any.git && \
+    cd nstd_any && \
+    git checkout ${NSTDLIB_TAG} && \
+    cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build build --target install -- -j$(nproc) && \
+    cd .. && rm -rf nstd_any
+
+RUN ldconfig
