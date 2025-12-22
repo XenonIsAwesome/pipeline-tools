@@ -1,7 +1,7 @@
-#include "../FunctionTest.hpp"
+#include "../../FunctionTest.hpp"
 
-#include <config/config.h>
-#include <config/convert.h>
+#include <utils/config/config.h>
+#include <utils/config/convert.h>
 #include <gtest/gtest.h>
 #include <string>
 
