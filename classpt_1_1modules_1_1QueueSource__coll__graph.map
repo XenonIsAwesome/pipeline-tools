@@ -1,0 +1,9 @@
+<map id="pt::modules::QueueSource&lt; T &gt;" name="pt::modules::QueueSource&lt; T &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,240,236,265"/>
+<area shape="rect" id="Node000002" href="$classpt_1_1flow_1_1Source.html" title=" " alt="" coords="41,167,200,192"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,206,123,240,118,240,118,206"/>
+<area shape="rect" id="Node000003" href="$classpt_1_1flow_1_1Producer.html" title=" " alt="" coords="53,79,188,119"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="123,132,123,166,118,166,118,132"/>
+<area shape="rect" id="Node000004" href="$classpt_1_1flow_1_1Flow.html" title=" " alt="" coords="67,5,175,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="123,44,123,79,118,79,118,44"/>
+</map>

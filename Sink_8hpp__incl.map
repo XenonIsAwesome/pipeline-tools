@@ -1,0 +1,17 @@
+<map id="core/src/flow/blocks/Sink.hpp" name="core/src/flow/blocks/Sink.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="263,5,414,45"/>
+<area shape="rect" id="Node000002" href="$Flow_8hpp.html" title=" " alt="" coords="283,93,394,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="341,46,341,79,336,79,336,46"/>
+<area shape="rect" id="Node000003" href="$ProductionPolicy_8h.html" title=" " alt="" coords="5,167,176,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="300,121,145,165,143,160,298,116"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="200,167,277,192"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="324,121,268,161,265,156,321,117"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="301,167,376,192"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="341,119,341,153,336,153,336,119"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="401,167,463,192"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="355,117,408,156,404,160,352,121"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="488,167,592,192"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="372,116,495,159,494,165,370,121"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="61,240,120,265"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="93,192,93,226,88,226,88,192"/>
+</map>

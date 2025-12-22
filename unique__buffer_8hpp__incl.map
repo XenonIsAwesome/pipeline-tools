@@ -1,0 +1,17 @@
+<map id="core/src/utils/memory/smart_buffers/unique_buffer.hpp" name="core/src/utils/memory/smart_buffers/unique_buffer.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="149,5,313,60"/>
+<area shape="rect" id="Node000002" href="$buffer__base_8hpp.html" title=" " alt="" coords="5,108,132,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="183,62,104,104,101,99,180,58"/>
+<area shape="rect" id="Node000006" href="$released__buffer_8hpp.html" title=" " alt="" coords="156,108,307,133"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="234,60,234,94,229,94,229,60"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="301,189,388,214"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="274,58,299,80,322,107,337,141,344,174,339,175,332,142,317,109,296,84,270,62"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="31,189,85,214"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="70,134,64,175,59,174,64,133"/>
+<area shape="rect" id="Node000004" href="$memory__location_8h.html" title=" " alt="" coords="109,181,277,221"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="88,131,153,172,150,176,86,136"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="159,269,226,295"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="195,222,195,255,190,255,190,222"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="228,135,210,170,206,168,223,132"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="250,131,318,179,315,183,247,136"/>
+</map>

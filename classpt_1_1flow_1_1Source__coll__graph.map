@@ -1,0 +1,7 @@
+<map id="pt::flow::Source&lt; Out &gt;" name="pt::flow::Source&lt; Out &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,167,180,192"/>
+<area shape="rect" id="Node000002" href="$classpt_1_1flow_1_1Producer.html" title=" " alt="" coords="25,79,160,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,132,95,166,90,166,90,132"/>
+<area shape="rect" id="Node000003" href="$classpt_1_1flow_1_1Flow.html" title=" " alt="" coords="39,5,147,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="95,44,95,79,90,79,90,44"/>
+</map>

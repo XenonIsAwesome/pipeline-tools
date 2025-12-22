@@ -1,0 +1,9 @@
+<map id="pt::modules::AdditionModule&lt; In, Add, Out &gt;" name="pt::modules::AdditionModule&lt; In, Add, Out &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,255,215,295"/>
+<area shape="rect" id="Node000002" href="$classpt_1_1flow_1_1Module.html" title=" " alt="" coords="32,167,188,207"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,221,113,254,107,254,107,221"/>
+<area shape="rect" id="Node000003" href="$classpt_1_1flow_1_1Producer.html" title=" " alt="" coords="43,79,177,119"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="113,133,113,166,107,166,107,133"/>
+<area shape="rect" id="Node000004" href="$classpt_1_1flow_1_1Flow.html" title=" " alt="" coords="56,5,164,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="113,44,113,79,107,79,107,44"/>
+</map>

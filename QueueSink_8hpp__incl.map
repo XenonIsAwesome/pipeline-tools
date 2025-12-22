@@ -1,0 +1,21 @@
+<map id="core/src/modules/io/queue/QueueSink.hpp" name="core/src/modules/io/queue/QueueSink.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="349,5,517,45"/>
+<area shape="rect" id="Node000002" href="$Sink_8hpp.html" title=" " alt="" coords="261,93,416,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="412,48,365,86,362,82,409,43"/>
+<area shape="rect" id="Node000010" href="$IQueue_8hpp.html" title=" " alt="" coords="440,93,619,119"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="458,43,506,82,503,87,455,48"/>
+<area shape="rect" id="Node000003" href="$Flow_8hpp.html" title=" " alt="" coords="283,167,394,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="341,119,341,153,336,153,336,119"/>
+<area shape="rect" id="Node000004" href="$ProductionPolicy_8h.html" title=" " alt="" coords="5,240,176,265"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="300,195,145,239,143,234,298,189"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="200,240,277,265"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="324,194,268,234,265,230,321,190"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="301,240,376,265"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="341,192,341,226,336,226,336,192"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="401,240,463,265"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="355,190,408,229,404,234,352,194"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="488,240,592,265"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="372,190,495,233,494,238,370,195"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="61,313,120,339"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="93,266,93,300,88,300,88,266"/>
+</map>

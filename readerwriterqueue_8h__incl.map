@@ -1,0 +1,31 @@
+<map id="core/src/utils/queues/moodycamel/readerwriterqueue.h" name="core/src/utils/queues/moodycamel/readerwriterqueue.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="323,5,570,45"/>
+<area shape="rect" id="Node000002" href="$atomicops_8h.html" title=" " alt="" coords="255,93,358,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="414,48,341,89,338,84,412,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,167,75,192"/>
+<area shape="poly" id="edge9_Node000001_Node000003" title=" " alt="" coords="359,48,280,69,200,96,130,129,71,162,69,157,127,124,198,91,279,63,357,43"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="99,167,165,192"/>
+<area shape="poly" id="edge10_Node000001_Node000005" title=" " alt="" coords="370,48,307,68,244,96,195,127,156,160,152,156,192,123,241,91,305,63,368,43"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="451,167,543,192"/>
+<area shape="poly" id="edge15_Node000001_Node000007" title=" " alt="" coords="439,46,427,81,426,100,430,118,446,140,466,157,463,161,442,143,426,120,421,100,422,80,434,45"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="567,167,627,192"/>
+<area shape="poly" id="edge16_Node000001_Node000009" title=" " alt="" coords="450,45,457,81,464,100,475,117,508,138,555,159,553,164,505,143,471,121,460,102,452,82,445,46"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="485,93,550,119"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="466,44,500,81,496,85,462,47"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="575,93,652,119"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="488,43,578,85,575,90,485,48"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="677,93,726,119"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="508,43,664,90,663,96,507,48"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="750,93,837,119"/>
+<area shape="poly" id="edge14_Node000001_Node000013" title=" " alt="" coords="530,43,737,89,736,94,529,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="265,121,89,168,87,163,263,116"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="190,167,253,192"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="295,121,247,160,244,156,291,117"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="280,121,174,164,172,159,278,116"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="277,167,336,192"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="309,119,309,153,304,153,304,119"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="338,116,454,159,452,164,336,121"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="360,167,427,192"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="322,117,370,156,367,160,319,121"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="358,116,555,164,553,169,356,121"/>
+</map>

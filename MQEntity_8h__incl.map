@@ -1,0 +1,9 @@
+<map id="core/src/utils/ipc/rmq/MQEntity.h" name="core/src/utils/ipc/rmq/MQEntity.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="278,5,406,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,212,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="287,48,157,91,155,86,285,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="236,93,448,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="345,46,345,79,339,79,339,46"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="471,93,530,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="381,43,466,85,464,90,379,48"/>
+</map>

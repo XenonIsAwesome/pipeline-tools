@@ -1,0 +1,7 @@
+<map id="pt::modules::io::ipc::rmq::RMQSink&lt; T &gt;" name="pt::modules::io::ipc::rmq::RMQSink&lt; T &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,152,167,192"/>
+<area shape="rect" id="Node000002" href="$classpt_1_1flow_1_1Sink.html" title=" " alt="" coords="15,79,157,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="89,118,89,152,83,152,83,118"/>
+<area shape="rect" id="Node000003" href="$classpt_1_1flow_1_1Flow.html" title=" " alt="" coords="32,5,140,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="89,44,89,79,83,79,83,44"/>
+</map>

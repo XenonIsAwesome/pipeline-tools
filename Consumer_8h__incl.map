@@ -1,0 +1,18 @@
+<map id="core/src/utils/ipc/rmq/Consumer.h" name="core/src/utils/ipc/rmq/Consumer.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="397,5,530,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="217,93,309,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="416,48,306,91,304,86,414,43"/>
+<area shape="rect" id="Node000003" href="$MQEntity_8h.html" title=" " alt="" coords="333,93,425,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="445,48,404,86,400,82,441,44"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="471,167,530,192"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="471,45,497,152,492,154,465,46"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="501,93,567,119"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="482,44,516,81,512,85,478,47"/>
+<area shape="rect" id="Node000008" href="$Consumer_8tpp.html" title=" " alt="" coords="591,93,703,119"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="508,43,609,85,607,90,506,48"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,167,212,192"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="337,121,166,166,165,161,335,116"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="236,167,448,192"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="376,120,357,156,352,153,371,118"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="400,116,471,157,468,162,397,121"/>
+</map>

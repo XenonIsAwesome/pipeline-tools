@@ -1,0 +1,9 @@
+<map id="pt::flow::Aggregator&lt; In, Out &gt;" name="pt::flow::Aggregator&lt; In, Out &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="35,167,184,207"/>
+<area shape="rect" id="Node000004" href="$classpt_1_1modules_1_1SumAggregator.html" title=" " alt="" coords="5,255,213,295"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="112,221,112,254,107,254,107,221"/>
+<area shape="rect" id="Node000002" href="$classpt_1_1flow_1_1Producer.html" title=" " alt="" coords="42,79,177,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="112,133,112,166,107,166,107,133"/>
+<area shape="rect" id="Node000003" href="$classpt_1_1flow_1_1Flow.html" title=" " alt="" coords="55,5,163,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="112,44,112,79,107,79,107,44"/>
+</map>

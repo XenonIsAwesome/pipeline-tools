@@ -1,0 +1,7 @@
+<map id="pt::queues::BlockingQueue&lt; T &gt;" name="pt::queues::BlockingQueue&lt; T &gt;">
+<area shape="rect" id="Node000001" title=" " alt="" coords="12,181,247,207"/>
+<area shape="rect" id="Node000002" href="$classpt_1_1queues_1_1MoodycamelQueue.html" title=" " alt="" coords="5,79,253,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="132,147,132,181,127,181,127,147"/>
+<area shape="rect" id="Node000003" href="$classpt_1_1queues_1_1IQueue.html" title=" " alt="" coords="38,5,221,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="132,44,132,79,127,79,127,44"/>
+</map>

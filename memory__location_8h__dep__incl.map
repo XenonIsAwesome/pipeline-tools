@@ -1,0 +1,30 @@
+<map id="core/src/utils/memory/memory_location.h" name="core/src/utils/memory/memory_location.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="258,5,422,45"/>
+<area shape="rect" id="Node000002" href="$utils_2memory_2concepts_8h.html" title=" " alt="" coords="70,101,234,141"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="291,54,191,103,189,98,289,49"/>
+<area shape="rect" id="Node000003" href="$buffer__base_8hpp.html" title=" " alt="" coords="258,93,422,148"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="343,59,343,93,337,93,337,59"/>
+<area shape="rect" id="Node000013" href="$released__buffer_8hpp.html" title=" " alt="" coords="447,93,623,148"/>
+<area shape="poly" id="edge14_Node000001_Node000013" title=" " alt="" coords="393,49,481,91,479,96,391,54"/>
+<area shape="rect" id="Node000004" href="$shared__buffer_8hpp.html" title=" " alt="" coords="218,299,382,353"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="335,162,308,299,303,298,330,161"/>
+<area shape="rect" id="Node000007" href="$unique__buffer_8hpp.html" title=" " alt="" coords="453,196,617,251"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="404,152,485,194,483,198,402,157"/>
+<area shape="rect" id="Node000005" href="$BM__shared__buffer_8cpp.html" title=" " alt="" coords="200,409,419,449"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="306,367,310,408,305,408,301,367"/>
+<area shape="rect" id="Node000006" href="$shared__buffer__tests_8cpp.html" title=" " alt="" coords="5,401,176,456"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="234,362,146,404,144,399,232,357"/>
+<area shape="poly" id="edge10_Node000007_Node000004" title=" " alt="" coords="462,258,362,301,360,296,460,254"/>
+<area shape="poly" id="edge11_Node000007_Node000005" title=" " alt="" coords="493,261,447,301,395,355,334,410,330,406,391,351,443,297,489,257"/>
+<area shape="rect" id="Node000008" href="$MemPool_8hpp.html" title=" " alt="" coords="457,306,639,346"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="543,264,548,305,543,306,537,265"/>
+<area shape="rect" id="Node000011" href="$BM__unique__buffer_8cpp.html" title=" " alt="" coords="663,306,881,346"/>
+<area shape="poly" id="edge12_Node000007_Node000011" title=" " alt="" coords="610,253,728,303,726,308,608,258"/>
+<area shape="rect" id="Node000012" href="$unique__buffer__tests_8cpp.html" title=" " alt="" coords="905,299,1076,353"/>
+<area shape="poly" id="edge13_Node000007_Node000012" title=" " alt="" coords="631,240,894,296,906,299,905,304,893,301,629,245"/>
+<area shape="rect" id="Node000009" href="$BM__mempool_8cpp.html" title=" " alt="" coords="443,409,653,449"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="551,360,551,409,545,409,545,360"/>
+<area shape="rect" id="Node000010" href="$mempool__tests_8cpp.html" title=" " alt="" coords="677,409,897,449"/>
+<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="606,349,743,406,741,411,604,354"/>
+<area shape="poly" id="edge15_Node000013_Node000007" title=" " alt="" coords="537,162,537,196,532,196,532,162"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="pt::ipc::rmq::MQEntity" name="pt::ipc::rmq::MQEntity">
+<area shape="rect" id="Node000001" title=" " alt="" coords="142,5,306,31"/>
+<area shape="rect" id="Node000002" href="$classpt_1_1ipc_1_1rmq_1_1Consumer.html" title=" " alt="" coords="5,79,213,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,40,129,81,127,76,193,35"/>
+<area shape="rect" id="Node000003" href="$classpt_1_1ipc_1_1rmq_1_1Publisher.html" title=" " alt="" coords="237,79,440,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="255,35,321,76,319,81,252,40"/>
+</map>
