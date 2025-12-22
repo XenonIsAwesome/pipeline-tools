@@ -2,7 +2,7 @@ services:
   pipeline-tools-docs:
     image: pipeline-tools/docs:latest
     build:
-      context: .
+      context: ..
       dockerfile: docs/Dockerfile
     ports:
-      - 8000:8000
+      - 8000:80

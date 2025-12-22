@@ -1,6 +1,7 @@
 FROM ubuntu:noble AS builder
 
 RUN apt update && apt install -qy --no-install-recommends \
+    wget \
     git \
     doxygen \
     graphviz && \
@@ -14,7 +15,7 @@ COPY CMakeLists.txt CMakeLists.txt
 COPY main.cpp main.cpp
 COPY README.md README.md
 
-RUN cd docs/ && wget https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/refs/heads/main/doxygen-awesome.css
+RUN cd docs/ && wget --no-check-certificate https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/refs/heads/main/doxygen-awesome.css
 RUN doxygen docs/Doxyfile
 
 FROM nginx:latest
