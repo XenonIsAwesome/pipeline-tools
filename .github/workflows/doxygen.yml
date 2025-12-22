@@ -1,0 +1,28 @@
+name: Deploy Doxygen to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  doxygen:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+
+      - name: Generate documentation
+        run: |
+          wget --no-check-certificate https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/refs/heads/main/doxygen-awesome.css
+          doxygen docs/Doxyfile
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/html
