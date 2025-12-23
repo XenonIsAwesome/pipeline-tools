@@ -5,7 +5,7 @@ permissions:
 
 on:
   push:
-    branches: [ main, add-doxygen-gh-pages-workflow ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
