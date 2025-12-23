@@ -1,6 +1,7 @@
 #pragma once
 
 #include <flow/Flow.hpp>
+#include <utils/exceptions/bad_any_cast_with_info.hpp>
 
 namespace pt::flow {
 template<typename In>
