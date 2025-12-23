@@ -107,10 +107,9 @@ $(document).ready(function(){initNavTree('RMQSource_8tpp_source.html',''); initR
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>}</div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>template&lt;pt::ipc::rmq::concepts::RMQSerialized T&gt;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>std::optional&lt;T&gt; pt::modules::io::ipc::rmq::RMQSource&lt;T&gt;::RMQSource(pt::ipc::rmq::RMQOptions options,</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>          const flow::ProductionPolicy policy = flow::ProductionPolicy::Fanout,</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>          std::chrono::milliseconds timeout = pt::ipc::rmq::default_rmq_consume_timeout) :</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    flow::Source&lt;T&gt;(policy), consumer(options), consume_timeout(timeout) {}</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>pt::modules::io::ipc::rmq::RMQSource&lt;T&gt;::RMQSource(pt::ipc::rmq::RMQOptions options,</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>          const flow::ProductionPolicy policy, std::chrono::milliseconds timeout) :</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    flow::Source&lt;T&gt;(policy), consumer(options), consume_timeout(timeout) {}</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

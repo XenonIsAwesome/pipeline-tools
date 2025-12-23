@@ -10,7 +10,7 @@ var searchData=
   ['blockingqueue_7',['BlockingQueue',['../classpt_1_1queues_1_1BlockingQueue.html',1,'pt::queues']]],
   ['blockingqueue_2ehpp_8',['BlockingQueue.hpp',['../BlockingQueue_8hpp.html',1,'']]],
   ['blockingreaderwriterqueue_9',['blockingreaderwriterqueue',['../classmoodycamel_1_1BlockingReaderWriterQueue.html',1,'moodycamel::BlockingReaderWriterQueue&lt; T, MAX_BLOCK_SIZE &gt;'],['../classmoodycamel_1_1BlockingReaderWriterQueue.html#ae9b473c7735992da103506501922adc9',1,'moodycamel::BlockingReaderWriterQueue::BlockingReaderWriterQueue(size_t size=15) AE_NO_TSAN'],['../classmoodycamel_1_1BlockingReaderWriterQueue.html#a9d9ac85749331b2d56bbeb3a49fdd739',1,'moodycamel::BlockingReaderWriterQueue::BlockingReaderWriterQueue(BlockingReaderWriterQueue &amp;&amp;other) AE_NO_TSAN']]],
-  ['blocks_10',['Blocks',['../namespacept_1_1flow.html#autotoc_md5',1,'']]],
+  ['blocks_10',['blocks',['../namespacept_1_1flow.html#autotoc_md5',1,'Blocks'],['../namespacept_1_1ipc_1_1rmq.html#autotoc_md15',1,'Flow Framework Blocks']]],
   ['bm_5faggregator_11',['BM_Aggregator',['../BM__aggregator_8cpp.html#a882c575f71d3721452446d7057572695',1,'BM_aggregator.cpp']]],
   ['bm_5faggregator_2ecpp_12',['BM_aggregator.cpp',['../BM__aggregator_8cpp.html',1,'']]],
   ['bm_5fmempool_2ecpp_13',['BM_mempool.cpp',['../BM__mempool_8cpp.html',1,'']]],
@@ -64,10 +64,10 @@ var searchData=
   ['bm_5funiquebuffersmallallocation_61',['BM_UniqueBufferSmallAllocation',['../BM__unique__buffer_8cpp.html#a33b6816b20c8cd713c4e7a9b93175e21',1,'BM_unique_buffer.cpp']]],
   ['bm_5funiquebufferview_62',['BM_UniqueBufferView',['../BM__unique__buffer_8cpp.html#a3db4b5a7153f0c84fe97698959db7c76',1,'BM_unique_buffer.cpp']]],
   ['bm_5funiquetosharedconversion_63',['BM_UniqueToSharedConversion',['../BM__shared__buffer_8cpp.html#a3e4e60c2311457b123cb6bd2a779ce61',1,'BM_shared_buffer.cpp']]],
-  ['buffer_64',['buffer',['../namespacept_1_1memory.html#autotoc_md13',1,'Released Buffer'],['../namespacept_1_1memory.html#autotoc_md15',1,'Shared Buffer'],['../namespacept_1_1memory.html#autotoc_md14',1,'Unique Buffer']]],
+  ['buffer_64',['buffer',['../namespacept_1_1memory.html#autotoc_md22',1,'Released Buffer'],['../namespacept_1_1memory.html#autotoc_md24',1,'Shared Buffer'],['../namespacept_1_1memory.html#autotoc_md23',1,'Unique Buffer']]],
   ['buffer_5fbase_65',['buffer_base',['../classpt_1_1memory_1_1buffer__base.html',1,'pt::memory::buffer_base&lt; T &gt;'],['../classpt_1_1memory_1_1buffer__base.html#a64f6d464ce8a4d5e71892655e63c0c3a',1,'pt::memory::buffer_base::buffer_base() noexcept=default'],['../classpt_1_1memory_1_1buffer__base.html#a622ecb49527f3bed2df5c42ac97d17d8',1,'pt::memory::buffer_base::buffer_base(pointer data, size_type count, MemoryLocation loc=MemoryLocation::Host) noexcept']]],
   ['buffer_5fbase_2ehpp_66',['buffer_base.hpp',['../buffer__base_8hpp.html',1,'']]],
-  ['buffers_67',['Smart Buffers',['../namespacept_1_1memory.html#autotoc_md12',1,'']]],
+  ['buffers_67',['Smart Buffers',['../namespacept_1_1memory.html#autotoc_md21',1,'']]],
   ['build_68',['build',['../classpt_1_1flow_1_1Mission.html#a6ceffb18fa23149f5e81b9f895bb956b',1,'pt::flow::Mission::build()'],['../classMockManualMission.html#a9121986451ec7123ea3a55ee2319e682',1,'MockManualMission::build()'],['../classMockAutoMission.html#ab33d211053775e81f506b292e82c6abf',1,'MockAutoMission::build()']]],
   ['byte_5fspan_69',['byte_span',['../classpt_1_1memory_1_1buffer__base.html#a1fb19ce24af08b97064953e682e6d3bc',1,'pt::memory::buffer_base::byte_span()'],['../classpt_1_1memory_1_1buffer__base.html#a51137ddef23f1c669fc1c6f3365452a7',1,'pt::memory::buffer_base::byte_span() const'],['../classpt_1_1memory_1_1shared__buffer.html#a231f635d71cf0d234dab3520c28dcecb',1,'pt::memory::shared_buffer::byte_span()']]]
 ];

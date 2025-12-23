@@ -127,25 +127,25 @@ Enumerations</h2></td></tr>
 <tr class="separator:a8fe89e1a73d30da83e60c62a71d29bff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h1><a class="anchor" id="autotoc_md11"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md20"></a>
 PipelineTools's Memory Utilities</h1>
 <p>The <code><a class="el" href="namespacept_1_1memory.html">pt::memory</a></code> namespace contains helpers to manage memory structures.</p>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md21"></a>
 Smart Buffers</h2>
 <p>Smart Buffers are containers that wrap arrays of data in a manner that can be described as a hybrid between smart pointers, <code>std::vector</code>, and <code>std::span</code>.</p>
 <p>Since <code>std::vector</code> does not support releasing the memory it holds, transferring ownership between threads, or between CPU and GPU memory is messy to achieve. Previous versions of PipelineTools used a <code>std::shared_ptr&lt;void&gt;</code> paired with a <code>size</code> variable to manage buffers, but this provides no type safety and bounds checking is prone to errors (you must remember the size of the type that was stored in the <code>shared_ptr</code>).</p>
 <p>This library provides three classes that can manage a (dynamically) allocated buffer, providing both clear ownership, adhering to RAII and Rule of 5 as much as possible, and the ability to "release" a buffer to use the underlying pointer if need be.</p>
 <p>Both <code><a class="el" href="classpt_1_1memory_1_1unique__buffer.html">unique_buffer</a></code> and <code><a class="el" href="classpt_1_1memory_1_1shared__buffer.html">shared_buffer</a></code> contain <code>view()</code> functions that should be used by client code when access to the underlying data is needed without owner transference. The <code>view()</code> function returns a <code><a class="el" href="classpt_1_1memory_1_1buffer__base.html">buffer_base</a></code> object that allows access to the pointer, size, and location (host / device) of the buffer's memory. <code><a class="el" href="classpt_1_1memory_1_1buffer__base.html">buffer_base</a></code> also provides a <code>span()</code> function to view the buffer as a non-owning container. <b>Client code should prefer receiving <code>std::span</code> if details of the memory ownership are not required.</b></p>
-<h3><a class="anchor" id="autotoc_md13"></a>
+<h3><a class="anchor" id="autotoc_md22"></a>
 Released Buffer</h3>
 <p>Think of Released Buffer as a lightweight wrapper around a buffer. It contains a pointer to the start of the buffer, its length, and a deleter function that provides the means to free the memory of the buffer. This class <b>Does not manage the buffer's memory!</b> It gives the holder of the class the responsibility to free the buffer. Released Buffers are usually returned by other Smart Buffers when calling the <code>release()</code> function.</p>
-<h3><a class="anchor" id="autotoc_md14"></a>
+<h3><a class="anchor" id="autotoc_md23"></a>
 Unique Buffer</h3>
 <p>A move-only owning container for a contiguous block of type <code>T</code> elements, similar to <code>std::unique_ptr</code>. Use a <code><a class="el" href="classpt_1_1memory_1_1unique__buffer.html">unique_buffer</a></code> when you don't need shared ownership of the buffer's data.</p>
-<h3><a class="anchor" id="autotoc_md15"></a>
+<h3><a class="anchor" id="autotoc_md24"></a>
 Shared Buffer</h3>
 <p>A thread-safe, reference-counted owning container similar to <code>std::shared_ptr</code> for a contiguous block of data. Use a <code><a class="el" href="classpt_1_1memory_1_1shared__buffer.html">shared_buffer</a></code> when you need shared ownership of the buffer's data.</p>
-<h2><a class="anchor" id="autotoc_md16"></a>
+<h2><a class="anchor" id="autotoc_md25"></a>
 Mempool</h2>
 <p>A Memory Pool, or <a class="el" href="classpt_1_1memory_1_1MemPool.html">MemPool</a> for short, allocates a block of memory and efficiently manages many small, frequent memory allocations and deallocations. Instead of repeatedly calling the system allocator (<code>malloc</code> / <code>free</code>), the pool provides fixed-size chunks of memory from a reserved region, improving performance.</p>
 <p>The implemented Mempool is thread-safe, and returns a <code><a class="el" href="classpt_1_1memory_1_1unique__buffer.html">unique_buffer</a></code> with a size that was provided during construction of the pool. The <code><a class="el" href="classpt_1_1memory_1_1unique__buffer.html">unique_buffer</a></code> can be cast into a <code><a class="el" href="classpt_1_1memory_1_1shared__buffer.html">shared_buffer</a></code> if the client wishes. </p>
