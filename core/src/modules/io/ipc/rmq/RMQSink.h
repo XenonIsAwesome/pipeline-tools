@@ -1,7 +1,7 @@
 #pragma once
 
 #include <flow/blocks/Sink.hpp>
-#include <utils/ipc/rmq/concepts.h>
+#include <utils/ipc/rmq/Concepts.h>
 #include <utils/ipc/rmq/Publisher.h>
 
 namespace pt::modules::io::ipc::rmq {
