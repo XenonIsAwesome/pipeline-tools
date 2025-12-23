@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install --no-install-recommends -qy \
     cmake \
     make \
     gcc \
+    gdb \
     g++ \
     libgtest-dev \
     libbenchmark-dev \
@@ -51,7 +52,7 @@ RUN git clone https://github.com/yhirose/cpp-httplib && \
     cd .. && rm -rf cpp-httplib
 
 ARG NSTDLIB_TAG="main"
-RUN git clone https://github.com/XenonIsAwesome/nstd_any.git && \
+RUN git clone https://github.com/mkmagic/nstd && \
     cd nstd_any && \
     git checkout ${NSTDLIB_TAG} && \
     cmake -B build -S . -DCMAKE_BUILD_TYPE=Release && \

@@ -28,12 +28,17 @@ find_package(nstd QUIET)
 if (NOT nstd_FOUND)
     include(FetchContent)
     set(nstd_VERSION_TAG "main" CACHE STRING "Version tag of the nstd dependency")
+    set(NSTD_ENABLE_TESTING OFF)
     FetchContent_Declare(
             nstd
-            GIT_REPOSITORY "https://github.com/XenonIsAwesome/nstd_any"
+            GIT_REPOSITORY "https://github.com/mkmagic/nstd"
             GIT_TAG ${nstd_VERSION_TAG}
     )
     FetchContent_MakeAvailable(nstd)
+
+    set(NSTD_LINK_TARGET nstd)
+else()
+    set(NSTD_LINK_TARGET nstd::nstd)
 endif ()
 
 

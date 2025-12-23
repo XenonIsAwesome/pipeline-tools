@@ -27,7 +27,7 @@ void pt::utils::logging::initialize_dawglogger() {
         path = std::string(pwd_raw) + default_dawglogger_config_location_in_pwd;
     } else {
         throw std::runtime_error("$" + std::string(dawglogger_config_location_env_key) +
-                                 "and $PWD are not defined");
+                                 " and $PWD are not defined");
     }
 
     DawgLog::Logger::init(DawgLog::Config(path));
