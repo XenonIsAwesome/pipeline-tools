@@ -1,0 +1,21 @@
+[requires]
+nstd/[<0.2]
+simpleamqpclient/[<2.6]
+dawg-logger/[<1.2]
+cpp-httplib/[<0.29]
+nlohmann_json/[<3.13]
+boost/1.83.0
+
+[tool_requires]
+cmake/[>=3.20 <4]
+
+[test_requires]
+gtest/[<1.18]
+benchmark/[<1.10]
+
+[layout]
+cmake_layout
+
+[generators]
+CMakeDeps
+CMakeToolchain

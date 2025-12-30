@@ -1,0 +1,19 @@
+{
+    "version": 4,
+    "vendor": {
+        "conan": {}
+    },
+    "include": [
+        "build/Debug/generators/CMakePresets.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "dev-debug",
+            "displayName": "Dev Debug (Tests enabled)",
+            "cacheVariables": {
+                "PIPELINE_TOOLS_ENABLE_TESTS": "ON"
+            },
+            "inherits": "conan-debug"
+        }
+    ]
+}

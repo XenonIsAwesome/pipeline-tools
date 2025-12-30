@@ -8,8 +8,6 @@ namespace pt::ipc::rmq {
 
 struct RMQOptions {
     std::string uri;
-    std::string username;
-    std::string password;
 
     std::string exchange_name;
     std::string exchange_type = AmqpClient::Channel::EXCHANGE_TYPE_DIRECT;
