@@ -50,6 +50,7 @@ bool pt::threads::Worker::set_name() const {
 }
 
 void pt::threads::Worker::worker_target(bool strict, const cpu_set_t& mask) {
+    // FIX: when set_priority and set_affinity are both present, the code gets stuck on set_affinity
     if (!set_priority()) {
         logger.error(LOG_SRC, "Couldn't set priority, are you running with privileges?");
         if (strict) {
@@ -72,11 +73,17 @@ void pt::threads::Worker::worker_target(bool strict, const cpu_set_t& mask) {
         logger.warning(LOG_SRC, "Couldn't set name");
     }
 
+    state = WorkerState::Started;
+
     this->func(this->stop_flag);
+
+    state = WorkerState::Stopped;
 }
 
 
 void pt::threads::Worker::start(bool strict) {
+    status = WorkerState::Starting;
+
     stop_flag.clear();
 
     cpu_set_t mask;
@@ -85,12 +92,22 @@ void pt::threads::Worker::start(bool strict) {
     work_thread = std::jthread([&strict, &mask, this] {
         worker_target(strict, mask);
     });
+
+    // Waiting for thread to start
+    while (state == WorkerState::Starting) {}
 }
 
 void pt::threads::Worker::stop() {
+    status = WorkerState::Stopping;
+
     stop_flag.test_and_set(std::memory_order_relaxed);
     stop_flag.notify_all();
 
     CPUManager::deallocate(allocated_cores);
     allocated_cores = {};
+
+    // Waiting for thread to stop
+    while (status == WorkerState::Stopping) {}
+
+    state = WorkerState::Idle;
 }
