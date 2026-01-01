@@ -4,10 +4,10 @@ project(pipeline-tools LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+include(CTest)
+
 option(ENABLE_COVERAGE "Enable code coverage reporting" OFF)
 if(ENABLE_COVERAGE)
-    include(CTest)
-
     message(STATUS "Build with coverage instrumentation")
     add_compile_options(--coverage -O0)
     add_link_options(--coverage)
