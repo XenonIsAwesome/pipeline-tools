@@ -9,7 +9,7 @@ namespace pt::utils::logging {
  * The default location of the DawgLogger configuration file
  * (inside the current directory)
  */
-static constexpr const char* default_dawglogger_config_location_in_pwd = "/config/dawglogger.json";
+static constexpr const char* default_dawglogger_config_location_in_pwd = "../../config/dawglogger.json";
 
 /** The environment variable name that holds the DawgLogger configuration file location */
 static constexpr const char* dawglogger_config_location_env_key = "DAWGLOGGER_CONFIGURATION_PATH";
@@ -24,7 +24,7 @@ void pt::utils::logging::initialize_dawglogger() {
     if (path_raw != nullptr) {
         path = std::string(path_raw);
     } else if (pwd_raw != nullptr) {
-        path = std::string(pwd_raw) + default_dawglogger_config_location_in_pwd;
+        path = std::filesystem::path(pwd_raw) / default_dawglogger_config_location_in_pwd;
     } else {
         throw std::runtime_error("$" + std::string(dawglogger_config_location_env_key) +
                                  " and $PWD are not defined");

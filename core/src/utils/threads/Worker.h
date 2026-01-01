@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <thread>
+#include <atomic>
 #include <utils/threads/CPUManager.h>
 
 namespace pt::threads {
@@ -71,7 +72,7 @@ private:
     func_t func;
     std::vector<Core> allocated_cores;
     std::jthread work_thread;
-    WorkerState state = { WorkerState::Idle };
+    std::atomic<WorkerState> state{WorkerState::Idle};
 
     /// The worker func gets this variable to stop gracefully
     std::atomic_flag stop_flag;

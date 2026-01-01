@@ -42,15 +42,10 @@ public:
 
 
     virtual void execute(nstd::any in = {}, size_t producer_id = 0) {
-        const std::type_info& in_type = in.type();
-        if (!in.has_value() || in_type != typeid(std::nullopt_t)) {
-            return;
-        }
-
         auto output = process_any(std::move(in), producer_id);
 
-        const std::type_info& out_type = out.type();
-        if (!output.has_value() || out_type != typeid(std::nullopt_t)) {
+        const std::type_info& out_type = output.type();
+        if (!output.has_value() || out_type == typeid(std::nullopt_t)) {
             return;
         }
 

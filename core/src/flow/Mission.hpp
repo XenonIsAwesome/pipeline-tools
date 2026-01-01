@@ -125,7 +125,7 @@ protected:
      * @param pipeline The pipeline object
      */
     void add(Pipeline&& pipeline) {
-        pipelines.push_back(std::move(pipeline));
+        pipelines.emplace_back(std::move(pipeline));
     }
 
     /**
@@ -175,7 +175,7 @@ private:
 
     /**
      * Type-erased queue wrapper
-     * So you wont have to input all the queue types when creating the mission
+     * So you won't have to input all the queue types when creating the mission
      */
     struct QueueWrapper {
         nstd::any queue;

@@ -50,16 +50,9 @@ bool pt::threads::Worker::set_name() const {
 }
 
 void pt::threads::Worker::worker_target(bool strict, const cpu_set_t& mask) {
-    // FIX: when set_priority and set_affinity are both present, the code gets stuck on set_affinity
-    if (!set_priority()) {
-        logger.error(LOG_SRC, "Couldn't set priority, are you running with privileges?");
-        if (strict) {
-            logger.throw_error<std::runtime_error>(
-                LOG_SRC,
-                "Couldn't set priority, are you running with privileges?");
-        }
-    }
-
+    // Set affinity before changing scheduling priority. Setting priority first
+    // could interfere with affinity on some systems/configurations and cause
+    // the thread to block inside `pthread_setaffinity_np`.
     if (!set_affinity(mask)) {
         logger.error(LOG_SRC, "Couldn't set affinity, are you running with privileges?");
         if (strict) {
@@ -69,20 +62,29 @@ void pt::threads::Worker::worker_target(bool strict, const cpu_set_t& mask) {
         }
     }
 
+    if (!set_priority()) {
+        logger.error(LOG_SRC, "Couldn't set priority, are you running with privileges?");
+        if (strict) {
+            logger.throw_error<std::runtime_error>(
+                LOG_SRC,
+                "Couldn't set priority, are you running with privileges?");
+        }
+    }
+
     if (!set_name()) {
         logger.warning(LOG_SRC, "Couldn't set name");
     }
 
-    state = WorkerState::Started;
+    state.store(WorkerState::Started);
 
     this->func(this->stop_flag);
 
-    state = WorkerState::Stopped;
+    state.store(WorkerState::Stopped);
 }
 
 
 void pt::threads::Worker::start(bool strict) {
-    status = WorkerState::Starting;
+    state.store(WorkerState::Starting);
 
     stop_flag.clear();
 
@@ -94,11 +96,13 @@ void pt::threads::Worker::start(bool strict) {
     });
 
     // Waiting for thread to start
-    while (state == WorkerState::Starting) {}
+    // ReSharper disable once CppDFAConstantConditions
+    // ReSharper disable once CppDFAEndlessLoop
+    while (state.load() == WorkerState::Starting) {}
 }
 
 void pt::threads::Worker::stop() {
-    status = WorkerState::Stopping;
+    state.store(WorkerState::Stopping);
 
     stop_flag.test_and_set(std::memory_order_relaxed);
     stop_flag.notify_all();
@@ -107,7 +111,9 @@ void pt::threads::Worker::stop() {
     allocated_cores = {};
 
     // Waiting for thread to stop
-    while (status == WorkerState::Stopping) {}
+    // ReSharper disable once CppDFAConstantConditions
+    // ReSharper disable once CppDFAEndlessLoop
+    while (state.load() == WorkerState::Stopping) {}
 
-    state = WorkerState::Idle;
+    state.store(WorkerState::Idle);
 }
