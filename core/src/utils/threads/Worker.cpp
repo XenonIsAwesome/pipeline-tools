@@ -50,15 +50,9 @@ bool pt::threads::Worker::set_name() const {
 }
 
 void pt::threads::Worker::worker_target(bool strict, const cpu_set_t& mask) {
-    if (!set_priority()) {
-        logger.error(LOG_SRC, "Couldn't set priority, are you running with privileges?");
-        if (strict) {
-            logger.throw_error<std::runtime_error>(
-                LOG_SRC,
-                "Couldn't set priority, are you running with privileges?");
-        }
-    }
-
+    // Set affinity before changing scheduling priority. Setting priority first
+    // could interfere with affinity on some systems/configurations and cause
+    // the thread to block inside `pthread_setaffinity_np`.
     if (!set_affinity(mask)) {
         logger.error(LOG_SRC, "Couldn't set affinity, are you running with privileges?");
         if (strict) {
@@ -68,15 +62,30 @@ void pt::threads::Worker::worker_target(bool strict, const cpu_set_t& mask) {
         }
     }
 
+    if (!set_priority()) {
+        logger.error(LOG_SRC, "Couldn't set priority, are you running with privileges?");
+        if (strict) {
+            logger.throw_error<std::runtime_error>(
+                LOG_SRC,
+                "Couldn't set priority, are you running with privileges?");
+        }
+    }
+
     if (!set_name()) {
         logger.warning(LOG_SRC, "Couldn't set name");
     }
 
+    state.store(WorkerState::Started);
+
     this->func(this->stop_flag);
+
+    state.store(WorkerState::Stopped);
 }
 
 
 void pt::threads::Worker::start(bool strict) {
+    state.store(WorkerState::Starting);
+
     stop_flag.clear();
 
     cpu_set_t mask;
@@ -85,12 +94,26 @@ void pt::threads::Worker::start(bool strict) {
     work_thread = std::jthread([&strict, &mask, this] {
         worker_target(strict, mask);
     });
+
+    // Waiting for thread to start
+    // ReSharper disable once CppDFAConstantConditions
+    // ReSharper disable once CppDFAEndlessLoop
+    while (state.load() == WorkerState::Starting) {}
 }
 
 void pt::threads::Worker::stop() {
+    state.store(WorkerState::Stopping);
+
     stop_flag.test_and_set(std::memory_order_relaxed);
     stop_flag.notify_all();
 
     CPUManager::deallocate(allocated_cores);
     allocated_cores = {};
+
+    // Waiting for thread to stop
+    // ReSharper disable once CppDFAConstantConditions
+    // ReSharper disable once CppDFAEndlessLoop
+    while (state.load() == WorkerState::Stopping) {}
+
+    state.store(WorkerState::Idle);
 }
