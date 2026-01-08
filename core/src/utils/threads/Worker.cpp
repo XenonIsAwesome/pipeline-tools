@@ -1,5 +1,5 @@
-#include <utils/threads/Worker.h>
 #include <iostream>
+#include <utils/threads/Worker.h>
 
 bool pt::threads::Worker::allocate_cores(cpu_set_t& mask) {
     CPUManager::getInstance();
@@ -84,36 +84,38 @@ void pt::threads::Worker::worker_target(bool strict, const cpu_set_t& mask) {
 
 
 void pt::threads::Worker::start(bool strict) {
-    state.store(WorkerState::Starting);
+    if (state.load() != WorkerState::Started) {
+        state.store(WorkerState::Starting);
 
-    stop_flag.clear();
+        stop_flag.clear();
 
-    cpu_set_t mask;
-    allocate_cores(mask);
+        cpu_set_t mask;
+        allocate_cores(mask);
 
-    work_thread = std::jthread([&strict, &mask, this] {
-        worker_target(strict, mask);
-    });
+        work_thread = std::jthread([&strict, &mask, this] { worker_target(strict, mask); });
 
-    // Waiting for thread to start
-    // ReSharper disable once CppDFAConstantConditions
-    // ReSharper disable once CppDFAEndlessLoop
-    while (state.load() == WorkerState::Starting) {}
+        // Waiting for thread to start
+        // ReSharper disable once CppDFAConstantConditions
+        // ReSharper disable once CppDFAEndlessLoop
+        while (state.load() == WorkerState::Starting) {}
+    }
 }
 
 void pt::threads::Worker::stop() {
-    state.store(WorkerState::Stopping);
+    if (state.load() != WorkerState::Stopped) {
+        state.store(WorkerState::Stopping);
 
-    stop_flag.test_and_set(std::memory_order_relaxed);
-    stop_flag.notify_all();
+        stop_flag.test_and_set(std::memory_order_relaxed);
+        stop_flag.notify_all();
 
-    CPUManager::deallocate(allocated_cores);
-    allocated_cores = {};
+        CPUManager::deallocate(allocated_cores);
+        allocated_cores = {};
 
-    // Waiting for thread to stop
-    // ReSharper disable once CppDFAConstantConditions
-    // ReSharper disable once CppDFAEndlessLoop
-    while (state.load() == WorkerState::Stopping) {}
+        // Waiting for thread to stop
+        // ReSharper disable once CppDFAConstantConditions
+        // ReSharper disable once CppDFAEndlessLoop
+        while (state.load() == WorkerState::Stopping) {}
 
-    state.store(WorkerState::Idle);
+        state.store(WorkerState::Idle);
+    }
 }
