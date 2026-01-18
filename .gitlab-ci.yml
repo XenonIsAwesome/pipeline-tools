@@ -71,7 +71,7 @@ Coverage Report:
     - apt-get update
     - apt-get install -y python3
   script:
-    - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DENABLE_COVERAGE=ON
+    - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTING=ON -DENABLE_COVERAGE=ON
     - cmake --build build --target all -- -j${NUM_PROCS}
     - ctest --test-dir build --extra-verbose
     - python3 -m dev_tools.scripts.mock_sonar_coverage

@@ -1,5 +1,5 @@
 .core_before_script: &core_before_script
-  - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTS=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${CI_JOB_TOKEN}
+  - cmake -B build -DCMAKE_BUILD_TYPE=Release -DPIPELINE_TOOLS_ENABLE_TESTING=ON -DGITLAB_USER=gitlab-ci-token -DGITLAB_PAT=${CI_JOB_TOKEN}
 
 Build CORE:
   image: ${CI_REGISTRY}/xenonisawesome/pipeline-tools/base:${CI_PIPELINE_ID}

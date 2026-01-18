@@ -4,29 +4,7 @@
         "conan": {}
     },
     "include": [
-        "build/Debug/generators/CMakePresets.json",
-        "build/Release/generators/CMakePresets.json"
+        "build/Debug/generators/CMakePresets.json"
     ],
-    "configurePresets": [
-        {
-            "name": "dev-debug",
-            "displayName": "Dev Debug (Tests enabled)",
-            "inherits": "conan-debug",
-            "cacheVariables": {
-                "PIPELINE_TOOLS_ENABLE_TESTS": "ON"
-            },
-            "binaryDir": "build/dev-debug",
-            "toolchainFile": "build/Debug/generators/conan_toolchain.cmake"
-        },
-        {
-            "name": "dev-release",
-            "displayName": "Dev Release (Tests enabled)",
-            "inherits": "conan-release",
-            "cacheVariables": {
-                "PIPELINE_TOOLS_ENABLE_TESTS": "ON"
-            },
-            "binaryDir": "build/dev-release",
-            "toolchainFile": "build/Release/generators/conan_toolchain.cmake"
-        }
-    ]
+    "configurePresets": []
 }

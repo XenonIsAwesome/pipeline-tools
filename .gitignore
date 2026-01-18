@@ -3,3 +3,5 @@ cmake-build-*/
 .idea/
 .vscode/
 .vs/
+.config
+.config.old

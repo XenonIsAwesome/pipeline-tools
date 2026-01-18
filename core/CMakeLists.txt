@@ -15,8 +15,8 @@ target_include_directories(${CORE_LIB_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/s
 target_link_libraries(${CORE_LIB_NAME} PUBLIC SimpleAmqpClient::SimpleAmqpClient nstd::nstd DawgLog::dawg-logger)
 
 # Setting up tests
-option(PIPELINE_TOOLS_ENABLE_TESTS "Enable building unit‑tests for ${CORE_LIB_NAME}" OFF)
-if(PIPELINE_TOOLS_ENABLE_TESTS)
+option(PIPELINE_TOOLS_ENABLE_TESTING "Enable building unit‑tests for ${CORE_LIB_NAME}" OFF)
+if(PIPELINE_TOOLS_ENABLE_TESTING)
     enable_testing()
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/test")
 endif()

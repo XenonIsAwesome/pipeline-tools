@@ -1,0 +1,32 @@
+menu "Pipeline-Tools Options"
+
+config PIPELINE_TOOLS_ENABLE_TESTING
+    bool "Enable tests and benchmarks for pipeline-tools."
+    default n
+    help
+      Enables tests and benchmarks for pipeline-tools
+
+
+config ENABLE_COVERAGE
+    bool "Enable coverage reporting for pipeline-tools"
+    default n
+    help
+      Enables coverage reporting for pipeline-tools
+
+endmenu
+
+menu "Enable/Disable missions"
+
+config ENABLE_EXAMPLE_MISSIONS
+    bool "Enable 'example' missions"
+    default n
+    help
+      Enables the 'example' missions included with pipeline-tools.
+
+config ENABLE_ZEROMQ_MISSIONS
+    bool "Enable missions that use the ZeroMQ library"
+    default n
+    help
+      Enables missions that use the ZeroMQ library.
+
+endmenu

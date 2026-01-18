@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(pipeline-tools LANGUAGES CXX)
 
+include(cmake/kconfig.cmake)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -28,7 +30,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 # TODO: make this automatically populate by adding sub-directories
 target_link_libraries(${PROJECT_NAME} PRIVATE
         -Wl,--whole-archive
-        mission-example
+        example-missions
 
         -Wl,--no-whole-archive
         pipeline-tools-server pipeline-tools-core)
