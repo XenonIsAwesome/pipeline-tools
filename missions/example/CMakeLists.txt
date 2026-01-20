@@ -1,3 +1,4 @@
+option(ENABLE_EXAMPLE_MISSIONS "Enables the 'example' missions library" OFF)
 if (ENABLE_EXAMPLE_MISSIONS)
     set(MISSION_NAME "example")
     set(MISSION_LIB "${MISSION_NAME}-missions")

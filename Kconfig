@@ -17,16 +17,12 @@ endmenu
 
 menu "Enable/Disable missions"
 
-config ENABLE_EXAMPLE_MISSIONS
-    bool "Enable 'example' missions"
-    default n
-    help
-      Enables the 'example' missions included with pipeline-tools.
+# BEGIN AUTO-GENERATED SECTION
 
-config ENABLE_ZEROMQ_MISSIONS
-    bool "Enable missions that use the ZeroMQ library"
+config ENABLE_EXAMPLE_MISSIONS
+    bool "Enable the 'example' missions library"
     default n
-    help
-      Enables missions that use the ZeroMQ library.
+
+# END AUTO-GENERATED SECTION
 
 endmenu

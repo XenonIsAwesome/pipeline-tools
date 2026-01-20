@@ -1,0 +1,10 @@
+[
+  {
+    "target": "cmake/kconfig.cmake",
+    "template": "kconfig.cmake.mako"
+  },
+  {
+    "target": "Kconfig",
+    "template": "Kconfig.mako"
+  }
+]
