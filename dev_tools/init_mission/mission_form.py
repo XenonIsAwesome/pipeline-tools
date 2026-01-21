@@ -52,10 +52,6 @@ class MissionForm(App):
                 Switch(id="default_check"),
                 id="toggle-row",
             ),
-            # Horizontal(
-            #     Checkbox(id="default_check"),
-            #     Label("Enable this mission by default?")
-            # ),
             Center(
                 Button("Initialize Mission", id="submit")
             ),
